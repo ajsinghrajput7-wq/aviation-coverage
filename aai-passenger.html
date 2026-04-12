@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAI Airport Passenger Traffic — FY2008-09 to FY2024-25</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f3; color: #1a1a18; font-size: 14px; line-height: 1.5; }
+  .header { background: #042C53; color: #fff; padding: 20px 28px; }
+  .header h1 { font-size: 20px; font-weight: 500; margin-bottom: 2px; }
+  .header p { font-size: 12px; color: #85B7EB; }
+  .nav { background: #fff; border-bottom: 0.5px solid #e0dfd8; display: flex; gap: 0; padding: 0 28px; overflow-x: auto; }
+  .nav-btn { padding: 12px 18px; font-size: 13px; font-weight: 400; border: none; background: none; cursor: pointer; color: #888; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .nav-btn.active { color: #185FA5; border-bottom-color: #185FA5; font-weight: 500; }
+  .page { display: none; padding: 20px 28px; }
+  .page.active { display: block; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .metric { background: #fff; border-radius: 8px; padding: 14px 16px; border: 0.5px solid #e8e7e0; }
+  .metric .lbl { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .metric .val { font-size: 22px; font-weight: 500; color: #042C53; }
+  .metric .sub { font-size: 11px; color: #aaa; margin-top: 3px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .card { background: #fff; border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  .card-title { font-size: 12px; font-weight: 500; color: #555; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 14px; }
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .insight { border-radius: 8px; padding: 12px 14px; }
+  .insight.blue { background: #E6F1FB; } .insight.blue .i-title { color: #0C447C; } .insight.blue .i-body { color: #185FA5; }
+  .insight.green { background: #EAF3DE; } .insight.green .i-title { color: #27500A; } .insight.green .i-body { color: #3B6D11; }
+  .insight.amber { background: #FAEEDA; } .insight.amber .i-title { color: #633806; } .insight.amber .i-body { color: #854F0B; }
+  .insight.coral { background: #FAECE7; } .insight.coral .i-title { color: #712B13; } .insight.coral .i-body { color: #993C1D; }
+  .insight.teal { background: #E1F5EE; } .insight.teal .i-title { color: #085041; } .insight.teal .i-body { color: #0F6E56; }
+  .insight.purple { background: #EEEDFE; } .insight.purple .i-title { color: #3C3489; } .insight.purple .i-body { color: #534AB7; }
+  .insight .i-title { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+  .insight .i-body { font-size: 11px; line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; border-bottom: 0.5px solid #e0dfd8; }
+  td { padding: 7px 10px; border-bottom: 0.5px solid #f0efea; color: #222; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf8; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; }
+  .badge-blue { background: #E6F1FB; color: #0C447C; }
+  .badge-green { background: #EAF3DE; color: #27500A; }
+  .badge-amber { background: #FAEEDA; color: #633806; }
+  .badge-coral { background: #FAECE7; color: #712B13; }
+  .section-label { font-size: 11px; font-weight: 500; color: #aaa; text-transform: uppercase; letter-spacing: .06em; margin: 20px 0 10px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .bar-lbl { font-size: 11px; color: #666; text-align: right; flex-shrink: 0; width: 36px; }
+  .bar-track { flex: 1; background: #f0efea; border-radius: 3px; height: 16px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .bar-val { font-size: 11px; color: #333; width: 60px; flex-shrink: 0; }
+  .legend-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; font-size: 11px; color: #666; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .covid-note { background: #FAECE7; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #993C1D; margin-bottom: 14px; }
+  @media (max-width: 700px) {
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .two-col, .insight-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AAI Airport Passenger Traffic — Historical Analysis</h1>
+  <p>Airports Authority of India &nbsp;·&nbsp; 8 Major Airports &nbsp;·&nbsp; FY2008-09 to FY2024-25 &nbsp;·&nbsp; Domestic + International combined &nbsp;·&nbsp; All figures in millions</p>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('overview',this)">Overview</button>
+  <button class="nav-btn" onclick="showPage('trends',this)">Traffic trends</button>
+  <button class="nav-btn" onclick="showPage('growth',this)">Growth &amp; CAGR</button>
+  <button class="nav-btn" onclick="showPage('covid',this)">COVID impact</button>
+  <button class="nav-btn" onclick="showPage('airport',this)">Airport profiles</button>
+</div>
+
+<!-- OVERVIEW -->
+<div id="page-overview" class="page active">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Total pax FY2024-25</div><div class="val">264.5M</div><div class="sub">8 major airports combined</div></div>
+    <div class="metric"><div class="lbl">Growth vs FY2008-09</div><div class="val">+197%</div><div class="sub">89.1M → 264.5M in 16 years</div></div>
+    <div class="metric"><div class="lbl">Fastest growing airport</div><div class="val">HYD 9.84%</div><div class="sub">CAGR over 16 years</div></div>
+    <div class="metric"><div class="lbl">Largest airport FY24-25</div><div class="val">DEL 79.3M</div><div class="sub">30% of 8-airport total</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Combined 8-airport traffic — FY2008-09 to FY2024-25</div>
+    <div class="covid-note">COVID-19 impact: FY2020-21 saw a 69% collapse to 69.2M from 224.4M in FY2019-20. Full recovery to pre-COVID levels achieved by FY2022-23.</div>
+    <div style="position:relative;width:100%;height:280px;">
+      <canvas id="c-total" role="img" aria-label="Line chart total pax 8 airports 2008 to 2025">Total 8-airport passengers: 89M (2008-09) to 264M (2024-25)</canvas>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">FY2024-25 market share</div>
+      <div style="position:relative;width:100%;height:220px;">
+        <canvas id="c-share" role="img" aria-label="Donut chart market share 2024-25">DEL 30%, BOM 21%, BLR 16%, HYD 11%, MAA 8%, CCU 8%, COK 4%, CCJ 1%</canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">FY2024-25 passenger volume</div>
+      <div id="bar-current"></div>
+    </div>
+  </div>
+
+  <div class="insight-grid" style="margin-top:16px;">
+    <div class="insight blue"><div class="i-title">DEL maintains dominance</div><div class="i-body">Delhi grew from 25.8M to 79.3M (7.27% CAGR), holding ~30% market share throughout. Crossed 73.7M in FY2023-24 — largest single airport in India by a wide margin.</div></div>
+    <div class="insight green"><div class="i-title">HYD + BLR outpace the field</div><div class="i-body">Hyderabad (9.84% CAGR, 4.49× growth) and Bengaluru (9.23% CAGR, 4.11× growth) are the standout performers — both significantly outgrowing DEL and BOM over the 16-year period.</div></div>
+    <div class="insight amber"><div class="i-title">BOM losing relative share</div><div class="i-body">Mumbai grew at only 5.25% CAGR — slowest of the top 4 airports. Its share of 8-airport traffic fell from 27.3% in FY2008-09 to 20.8% in FY2024-25 as BLR and HYD gained ground.</div></div>
+  </div>
+</div>
+
+<!-- TRENDS -->
+<div id="page-trends" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Peak pre-COVID year</div><div class="val">FY2018-19</div><div class="sub">230.7M combined</div></div>
+    <div class="metric"><div class="lbl">COVID trough</div><div class="val">FY2020-21</div><div class="sub">69.2M — down 70%</div></div>
+    <div class="metric"><div class="lbl">Recovery year</div><div class="val">FY2022-23</div><div class="sub">210.3M — near pre-COVID</div></div>
+    <div class="metric"><div class="lbl">FY2024-25 vs peak</div><div class="val">+14.6%</div><div class="sub">Above FY2018-19</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Individual airport traffic trends — all airports</div>
+    <div class="legend-row" id="trend-legend"></div>
+    <div style="position:relative;width:100%;height:320px;">
+      <canvas id="c-trends" role="img" aria-label="Multi-line chart all airport trends 2008-2025">Line chart showing all 8 airports passenger trends</canvas>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Year-on-year growth — combined 8 airports (%)</div>
+      <div style="position:relative;width:100%;height:220px;">
+        <canvas id="c-yoy" role="img" aria-label="Bar chart year on year growth">YoY growth rates 2009 to 2025</canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Airport traffic FY2024-25 vs FY2008-09</div>
+      <table>
+        <thead><tr><th>Airport</th><th>FY2008-09</th><th>FY2024-25</th><th>Growth</th></tr></thead>
+        <tbody id="growth-table"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GROWTH & CAGR -->
+<div id="page-growth" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Highest CAGR</div><div class="val">HYD 9.84%</div><div class="sub">4.49× growth multiple</div></div>
+    <div class="metric"><div class="lbl">Second highest</div><div class="val">BLR 9.23%</div><div class="sub">4.11× growth multiple</div></div>
+    <div class="metric"><div class="lbl">Lowest CAGR</div><div class="val">CCJ 4.61%</div><div class="sub">2.06× growth multiple</div></div>
+    <div class="metric"><div class="lbl">8-airport combined CAGR</div><div class="val">~7.1%</div><div class="sub">FY2008-09 to FY2024-25</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">CAGR by airport (FY2008-09 to FY2024-25)</div>
+      <div style="position:relative;width:100%;height:280px;">
+        <canvas id="c-cagr" role="img" aria-label="Bar chart CAGR by airport">HYD 9.84%, BLR 9.23%, DEL 7.27%, CCU 6.81%, COK 6.42%, MAA 6.01%, BOM 5.25%, CCJ 4.61%</canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Growth multiple (end / start pax)</div>
+      <div style="position:relative;width:100%;height:280px;">
+        <canvas id="c-multiple" role="img" aria-label="Bar chart growth multiples">HYD 4.49x, BLR 4.11x, DEL 3.07x, CCU 2.87x, COK 2.71x, MAA 2.55x, BOM 2.27x, CCJ 2.06x</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">CAGR & growth summary</div>
+    <table>
+      <thead><tr><th>Airport</th><th>City</th><th>FY08-09 (Mn)</th><th>FY24-25 (Mn)</th><th>CAGR</th><th>Growth multiple</th><th>Tier</th></tr></thead>
+      <tbody id="cagr-table"></tbody>
+    </table>
+  </div>
+
+  <div class="insight-grid">
+    <div class="insight teal"><div class="i-title">South India growth story</div><div class="i-body">HYD (9.84%) and BLR (9.23%) are both South Indian tech hubs. Their superior CAGR reflects India's IT sector boom, rising business travel and fast-growing middle class in Telangana and Karnataka.</div></div>
+    <div class="insight coral"><div class="i-title">BOM capacity constrained</div><div class="i-body">Mumbai's 5.25% CAGR — well below the group average — likely reflects CSIA's single-runway operational constraints and slot scarcity rather than weak demand. NAVI Mumbai airport should unlock pent-up growth.</div></div>
+    <div class="insight purple"><div class="i-title">CCJ — niche Gulf market</div><div class="i-body">Calicut's 4.61% CAGR is the lowest in the group. Heavily dependent on Gulf VFR/labour traffic, it lacks the domestic business travel base that drives DEL/BLR/HYD growth. Highly exposed to Gulf migration policy changes.</div></div>
+  </div>
+</div>
+
+<!-- COVID -->
+<div id="page-covid" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Pre-COVID peak</div><div class="val">224.4M</div><div class="sub">FY2019-20 combined</div></div>
+    <div class="metric"><div class="lbl">COVID trough</div><div class="val">69.2M</div><div class="sub">FY2020-21 — -69.2%</div></div>
+    <div class="metric"><div class="lbl">Worst hit airport</div><div class="val">BOM -75.8%</div><div class="sub">45.9M → 11.1M</div></div>
+    <div class="metric"><div class="lbl">Most resilient</div><div class="val">HYD -63.1%</div><div class="sub">Smallest decline</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">COVID collapse and recovery — all airports</div>
+    <div style="position:relative;width:100%;height:300px;">
+      <canvas id="c-covid" role="img" aria-label="Line chart COVID impact and recovery">COVID impact showing collapse in 2020-21 and recovery by 2022-23</canvas>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">COVID decline — FY2019-20 to FY2020-21 (%)</div>
+      <div id="covid-decline-bars"></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">Recovery — FY2024-25 vs FY2019-20 (%)</div>
+      <div id="covid-recovery-bars"></div>
+    </div>
+  </div>
+
+  <div class="insight-grid" style="margin-top:16px;">
+    <div class="insight coral"><div class="i-title">BOM hit hardest</div><div class="i-body">Mumbai fell 75.8% to just 11.1M in FY2020-21. Its high international traffic share (>35%) amplified the impact vs domestic-heavy airports. BOM also had the slowest post-COVID recovery pace.</div></div>
+    <div class="insight green"><div class="i-title">HYD + BLR most resilient</div><div class="i-body">HYD declined least at -63.1% and has surged furthest above pre-COVID levels (+34.6%). BLR is +29.3% above pre-COVID. Both driven by tech sector growth and strong domestic demand post-reopening.</div></div>
+    <div class="insight amber"><div class="i-title">MAA + CCU still lagging</div><div class="i-body">Chennai is only 0.4% above pre-COVID peak and Kolkata is 0.9% below. Both markets show weaker post-COVID demand recovery vs national peers — potentially reflecting slower economic recovery in their catchment areas.</div></div>
+  </div>
+</div>
+
+<!-- AIRPORT PROFILES -->
+<div id="page-airport" class="page">
+  <div class="section-label">Select an airport</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;" id="airport-pills">
+    <button class="apill active" onclick="showAirport('DEL',this)">DEL — Delhi</button>
+    <button class="apill" onclick="showAirport('BOM',this)">BOM — Mumbai</button>
+    <button class="apill" onclick="showAirport('BLR',this)">BLR — Bengaluru</button>
+    <button class="apill" onclick="showAirport('HYD',this)">HYD — Hyderabad</button>
+    <button class="apill" onclick="showAirport('MAA',this)">MAA — Chennai</button>
+    <button class="apill" onclick="showAirport('CCU',this)">CCU — Kolkata</button>
+    <button class="apill" onclick="showAirport('COK',this)">COK — Kochi</button>
+    <button class="apill" onclick="showAirport('CCJ',this)">CCJ — Calicut</button>
+  </div>
+
+  <div class="metric-grid" id="ap-metrics"></div>
+
+  <div class="card">
+    <div class="card-title" id="ap-chart-title">DEL — annual passenger traffic</div>
+    <div style="position:relative;width:100%;height:260px;">
+      <canvas id="c-airport" role="img" aria-label="Airport traffic trend chart">Airport traffic trend</canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Year-by-year detail</div>
+    <div style="overflow-x:auto;">
+      <table><thead><tr><th>Financial year</th><th>Passengers (Mn)</th><th>YoY change</th><th>Note</th></tr></thead><tbody id="ap-table"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<style>
+.apill { padding: 6px 14px; border-radius: 20px; border: 0.5px solid #e0dfd8; cursor: pointer; background: #fff; color: #555; font-size: 12px; font-family: Arial, sans-serif; }
+.apill.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+</style>
+
+<script>
+const YEARS = ['2008-09','2009-10','2010-11','2011-12','2012-13','2013-14','2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23','2023-24','2024-25'];
+const SHORT_YEARS = YEARS.map(y => "'" + y.slice(2,4));
+const DATA = {
+  DEL: [25.8,26.0,34.0,38.1,40.9,46.0,52.3,48.4,57.7,65.7,69.2,67.3,22.6,39.3,65.3,73.7,79.3],
+  BOM: [24.3,25.9,30.7,32.0,33.8,37.0,40.3,41.7,45.2,48.5,48.8,45.9,11.1,21.7,43.9,52.8,55.1],
+  BLR: [10.2,11.2,13.8,15.5,16.7,18.3,20.5,19.0,22.9,26.9,33.3,32.4,10.9,16.3,31.9,37.5,41.9],
+  MAA: [8.8,9.5,11.8,13.0,13.8,15.2,16.8,15.2,17.7,20.4,22.5,22.3,5.5,9.5,18.6,21.2,22.4],
+  CCU: [7.6,8.0,9.9,11.0,11.8,13.5,15.0,12.8,15.8,19.9,21.9,22.0,7.7,11.0,17.8,19.8,21.8],
+  COK: [4.1,4.4,5.3,6.0,6.4,7.1,7.8,7.7,9.0,10.2,10.2,9.6,2.5,4.7,8.8,10.4,11.1],
+  HYD: [6.5,7.2,9.0,10.4,11.2,12.5,14.0,12.4,15.1,18.2,21.4,21.7,8.0,12.4,21.0,25.0,29.2],
+  CCJ: [1.8,2.0,2.3,2.5,2.6,2.8,3.0,2.3,2.7,3.1,3.4,3.2,0.9,1.7,3.0,3.3,3.7]
+};
+const NAMES = {DEL:'Delhi (IGI)',BOM:'Mumbai (CSIA)',BLR:'Bengaluru (KIA)',MAA:'Chennai (MIAL)',CCU:'Kolkata (NSCBIA)',COK:'Kochi (CIAL)',HYD:'Hyderabad (RGIA)',CCJ:'Calicut (CIAL)'};
+const CAGR = {DEL:7.27,BOM:5.25,BLR:9.23,MAA:6.01,CCU:6.81,COK:6.42,HYD:9.84,CCJ:4.61};
+const MULT = {DEL:3.07,BOM:2.27,BLR:4.11,MAA:2.55,CCU:2.87,COK:2.71,HYD:4.49,CCJ:2.06};
+const COLORS = {DEL:'#185FA5',BOM:'#D85A30',BLR:'#0F6E56',MAA:'#7F77DD',CCU:'#BA7517',COK:'#D4537E',HYD:'#1D9E75',CCJ:'#888780'};
+const AIRPORTS = ['DEL','BOM','BLR','MAA','CCU','COK','HYD','CCJ'];
+const tc='#666', gc='rgba(0,0,0,0.06)';
+const TOTAL = YEARS.map((_,i)=>Math.round(AIRPORTS.reduce((s,a)=>s+DATA[a][i],0)*10)/10);
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+let apChart = null;
+function showAirport(code, btn) {
+  document.querySelectorAll('.apill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = DATA[code];
+  const preCovid = d[11], trough = d[12], latest = d[16], start = d[0];
+  const recovery = ((latest-preCovid)/preCovid*100).toFixed(1);
+  document.getElementById('ap-metrics').innerHTML = `
+    <div class="metric"><div class="lbl">FY2024-25</div><div class="val">${latest}M</div><div class="sub">passengers</div></div>
+    <div class="metric"><div class="lbl">CAGR (16yr)</div><div class="val">${CAGR[code]}%</div><div class="sub">${MULT[code]}× growth multiple</div></div>
+    <div class="metric"><div class="lbl">COVID trough</div><div class="val">${trough}M</div><div class="sub">${((trough-preCovid)/preCovid*100).toFixed(1)}% vs pre-COVID</div></div>
+    <div class="metric"><div class="lbl">Recovery</div><div class="val">${recovery>0?'+':''}${recovery}%</div><div class="sub">vs FY2019-20 pre-COVID peak</div></div>`;
+  document.getElementById('ap-chart-title').textContent = `${code} — ${NAMES[code]} — annual passenger traffic`;
+  if (apChart) apChart.destroy();
+  const ctx = document.getElementById('c-airport').getContext('2d');
+  apChart = new Chart(ctx, {
+    type:'bar',
+    data:{labels:SHORT_YEARS,datasets:[{
+      label:'Passengers (Mn)',data:d,
+      backgroundColor:d.map((_,i)=>i===12?'#F09595':COLORS[code]+'bb'),
+      borderColor:d.map((_,i)=>i===12?'#E24B4A':COLORS[code]),
+      borderWidth:1,borderRadius:3,borderSkipped:false
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'M pax'}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'M'},grid:{color:gc},border:{display:false}}}}
+  });
+  const tb = document.getElementById('ap-table');
+  tb.innerHTML = '';
+  d.forEach((v,i)=>{
+    const yoy = i===0?'—':((v-d[i-1])/d[i-1]*100).toFixed(1)+'%';
+    const yoyColor = i===0?'#888':parseFloat(yoy)<0?'#E24B4A':'#0F6E56';
+    const note = i===12?'<span class="badge badge-coral">COVID trough</span>':i===11?'<span class="badge badge-amber">Pre-COVID peak</span>':i===16?'<span class="badge badge-blue">Latest</span>':'';
+    tb.innerHTML+=`<tr><td>${YEARS[i]}</td><td>${v}M</td><td style="color:${yoyColor};font-weight:500">${yoy}</td><td>${note}</td></tr>`;
+  });
+}
+
+window.onload = function() {
+  // Total line chart
+  new Chart(document.getElementById('c-total'),{
+    type:'line',
+    data:{labels:SHORT_YEARS,datasets:[{
+      label:'Total pax (8 airports)',data:TOTAL,
+      borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.08)',
+      pointRadius:d=>d.dataIndex===12?6:3,
+      pointBackgroundColor:d=>d.dataIndex===12?'#E24B4A':'#185FA5',
+      borderWidth:2,fill:true,tension:0.3
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'M pax'}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'M'},grid:{color:gc},border:{display:false},min:0}}}
+  });
+
+  // Market share donut
+  const latest = AIRPORTS.map(a=>DATA[a][16]);
+  new Chart(document.getElementById('c-share'),{
+    type:'doughnut',
+    data:{labels:AIRPORTS,datasets:[{data:latest,backgroundColor:AIRPORTS.map(a=>COLORS[a]),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}M (${(ctx.raw/264.5*100).toFixed(1)}%)`}}}}
+  });
+
+  // Current bar
+  const barEl = document.getElementById('bar-current');
+  const sorted = [...AIRPORTS].sort((a,b)=>DATA[b][16]-DATA[a][16]);
+  const maxV = DATA.DEL[16];
+  barEl.innerHTML = sorted.map(a=>`
+    <div class="bar-row">
+      <span class="bar-lbl">${a}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(DATA[a][16]/maxV*100).toFixed(1)}%;background:${COLORS[a]}"></div></div>
+      <span class="bar-val">${DATA[a][16]}M</span>
+    </div>`).join('');
+
+  // Trends multi-line
+  const legendEl = document.getElementById('trend-legend');
+  legendEl.innerHTML = AIRPORTS.map(a=>`<span class="legend-item"><span class="legend-dot" style="background:${COLORS[a]}"></span>${a}</span>`).join('');
+  new Chart(document.getElementById('c-trends'),{
+    type:'line',
+    data:{labels:SHORT_YEARS,datasets:AIRPORTS.map(a=>({
+      label:a,data:DATA[a],borderColor:COLORS[a],backgroundColor:'transparent',
+      borderWidth:2,pointRadius:2,tension:0.3
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}M`}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'M'},grid:{color:gc},border:{display:false},min:0}}}
+  });
+
+  // YoY growth
+  const yoyData = TOTAL.slice(1).map((v,i)=>Math.round((v-TOTAL[i])/TOTAL[i]*1000)/10);
+  new Chart(document.getElementById('c-yoy'),{
+    type:'bar',
+    data:{labels:SHORT_YEARS.slice(1),datasets:[{label:'YoY growth %',data:yoyData,backgroundColor:yoyData.map(v=>v<0?'#F09595':'#85B7EB'),borderRadius:3,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},scales:{x:{ticks:{color:tc,font:{size:9}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'%'},grid:{color:gc},border:{display:false}}}}
+  });
+
+  // Growth table
+  const gt = document.getElementById('growth-table');
+  [...AIRPORTS].sort((a,b)=>CAGR[b]-CAGR[a]).forEach(a=>{
+    const growth = ((DATA[a][16]-DATA[a][0])/DATA[a][0]*100).toFixed(0);
+    gt.innerHTML+=`<tr><td>${a}</td><td>${DATA[a][0]}M</td><td>${DATA[a][16]}M</td><td style="color:#0F6E56;font-weight:500">+${growth}%</td></tr>`;
+  });
+
+  // CAGR chart
+  const cagrSorted = [...AIRPORTS].sort((a,b)=>CAGR[b]-CAGR[a]);
+  new Chart(document.getElementById('c-cagr'),{
+    type:'bar',
+    data:{labels:cagrSorted,datasets:[{label:'CAGR %',data:cagrSorted.map(a=>CAGR[a]),backgroundColor:cagrSorted.map(a=>COLORS[a]),borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'% CAGR'}}},scales:{x:{ticks:{color:tc,font:{size:12}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'%'},grid:{color:gc},border:{display:false},min:0}}}
+  });
+
+  // Growth multiple chart
+  const multSorted = [...AIRPORTS].sort((a,b)=>MULT[b]-MULT[a]);
+  new Chart(document.getElementById('c-multiple'),{
+    type:'bar',
+    data:{labels:multSorted,datasets:[{label:'Growth multiple',data:multSorted.map(a=>MULT[a]),backgroundColor:multSorted.map(a=>COLORS[a]),borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'×'}}},scales:{x:{ticks:{color:tc,font:{size:12}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'×'},grid:{color:gc},border:{display:false},min:0}}}
+  });
+
+  // CAGR table
+  const ct = document.getElementById('cagr-table');
+  [...AIRPORTS].sort((a,b)=>CAGR[b]-CAGR[a]).forEach((a,i)=>{
+    const tier = CAGR[a]>=9?'<span class="badge badge-green">High growth</span>':CAGR[a]>=6?'<span class="badge badge-blue">Moderate</span>':'<span class="badge badge-amber">Slow growth</span>';
+    ct.innerHTML+=`<tr><td>${a}</td><td>${NAMES[a]}</td><td>${DATA[a][0]}M</td><td>${DATA[a][16]}M</td><td style="font-weight:500;color:#0F6E56">${CAGR[a]}%</td><td style="font-weight:500">${MULT[a]}×</td><td>${tier}</td></tr>`;
+  });
+
+  // COVID chart — focus years
+  const covidYears = SHORT_YEARS.slice(9); // 2017-18 onwards
+  new Chart(document.getElementById('c-covid'),{
+    type:'line',
+    data:{labels:covidYears,datasets:AIRPORTS.map(a=>({
+      label:a,data:DATA[a].slice(9),borderColor:COLORS[a],backgroundColor:'transparent',
+      borderWidth:2,pointRadius:3,tension:0.3
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}M`}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'M'},grid:{color:gc},border:{display:false},min:0}}}
+  });
+
+  // COVID decline bars
+  const decEl = document.getElementById('covid-decline-bars');
+  const declines = AIRPORTS.map(a=>({a,v:Math.abs(((DATA[a][12]-DATA[a][11])/DATA[a][11]*100))})).sort((x,y)=>y.v-x.v);
+  const maxDec = Math.max(...declines.map(d=>d.v));
+  decEl.innerHTML = declines.map(d=>`
+    <div class="bar-row">
+      <span class="bar-lbl">${d.a}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(d.v/maxDec*100).toFixed(1)}%;background:#F09595"></div></div>
+      <span class="bar-val" style="color:#E24B4A">-${d.v.toFixed(1)}%</span>
+    </div>`).join('');
+
+  // COVID recovery bars
+  const recEl = document.getElementById('covid-recovery-bars');
+  const recoveries = AIRPORTS.map(a=>({a,v:((DATA[a][16]-DATA[a][11])/DATA[a][11]*100)})).sort((x,y)=>y.v-x.v);
+  const maxRec = Math.max(...recoveries.map(d=>d.v));
+  recEl.innerHTML = recoveries.map(d=>`
+    <div class="bar-row">
+      <span class="bar-lbl">${d.a}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(0,(d.v/maxRec*100)).toFixed(1)}%;background:${d.v>=0?'#97C459':'#F09595'}"></div></div>
+      <span class="bar-val" style="color:${d.v>=0?'#3B6D11':'#E24B4A'}">${d.v>=0?'+':''}${d.v.toFixed(1)}%</span>
+    </div>`).join('');
+
+  // Init airport tab
+  showAirport('DEL', document.querySelector('.apill'));
+};
+</script>
+</body>
+</html>
