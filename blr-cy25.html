@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLR CY2025 — Passenger Traffic Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f3; color: #1a1a18; font-size: 14px; line-height: 1.5; }
+  .header { background: #042C53; color: #fff; padding: 20px 28px; }
+  .header h1 { font-size: 20px; font-weight: 500; margin-bottom: 2px; }
+  .header p { font-size: 12px; color: #85B7EB; }
+  .nav { background: #fff; border-bottom: 0.5px solid #e0dfd8; display: flex; gap: 0; padding: 0 28px; overflow-x: auto; }
+  .nav-btn { padding: 12px 18px; font-size: 13px; font-weight: 400; border: none; background: none; cursor: pointer; color: #888; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .nav-btn.active { color: #185FA5; border-bottom-color: #185FA5; font-weight: 500; }
+  .page { display: none; padding: 20px 28px; }
+  .page.active { display: block; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .metric { background: #fff; border-radius: 8px; padding: 14px 16px; border: 0.5px solid #e8e7e0; }
+  .metric .lbl { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .metric .val { font-size: 22px; font-weight: 500; color: #042C53; }
+  .metric .sub { font-size: 11px; color: #aaa; margin-top: 3px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .card { background: #fff; border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 16px 18px; }
+  .card-title { font-size: 12px; font-weight: 500; color: #555; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 14px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .bar-lbl { font-size: 11px; color: #666; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; background: #f0efea; border-radius: 3px; height: 15px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-val { font-size: 11px; color: #333; width: 72px; flex-shrink: 0; }
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .insight { border-radius: 8px; padding: 12px 14px; }
+  .insight.blue { background: #E6F1FB; } .insight.blue .i-title { color: #0C447C; } .insight.blue .i-body { color: #185FA5; }
+  .insight.green { background: #EAF3DE; } .insight.green .i-title { color: #27500A; } .insight.green .i-body { color: #3B6D11; }
+  .insight.amber { background: #FAEEDA; } .insight.amber .i-title { color: #633806; } .insight.amber .i-body { color: #854F0B; }
+  .insight.coral { background: #FAECE7; } .insight.coral .i-title { color: #712B13; } .insight.coral .i-body { color: #993C1D; }
+  .insight.teal { background: #E1F5EE; } .insight.teal .i-title { color: #085041; } .insight.teal .i-body { color: #0F6E56; }
+  .insight .i-title { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+  .insight .i-body { font-size: 11px; line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; border-bottom: 0.5px solid #e0dfd8; }
+  td { padding: 7px 10px; border-bottom: 0.5px solid #f0efea; color: #222; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf8; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; }
+  .badge-blue { background: #E6F1FB; color: #0C447C; }
+  .badge-green { background: #EAF3DE; color: #27500A; }
+  .badge-amber { background: #FAEEDA; color: #633806; }
+  .badge-coral { background: #FAECE7; color: #712B13; }
+  .badge-teal { background: #E1F5EE; color: #085041; }
+  .section-label { font-size: 11px; font-weight: 500; color: #aaa; text-transform: uppercase; letter-spacing: .06em; margin: 20px 0 10px; }
+  @media (max-width: 700px) {
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .two-col, .insight-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Kempegowda International Airport (BLR) — Passenger Traffic Analysis</h1>
+  <p>IATA Airport IS &nbsp;|&nbsp; Calendar Year 2025 &nbsp;|&nbsp; Directional OD &nbsp;|&nbsp; All fares and revenue in USD</p>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('overview',this)">Overview</button>
+  <button class="nav-btn" onclick="showPage('domestic',this)">Domestic corridors</button>
+  <button class="nav-btn" onclick="showPage('international',this)">International corridors</button>
+  <button class="nav-btn" onclick="showPage('yield',this)">Yield &amp; revenue</button>
+  <button class="nav-btn" onclick="showPage('usa',this)">US market deep-dive</button>
+  <button class="nav-btn" onclick="showPage('insights',this)">Key insights</button>
+</div>
+
+<div id="page-overview" class="page active">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Total passengers</div><div class="val">17.1M</div><div class="sub">1,462 OD pairs from BLR</div></div>
+    <div class="metric"><div class="lbl">Total revenue</div><div class="val">$1.96B</div><div class="sub">USD, all classes</div></div>
+    <div class="metric"><div class="lbl">Overall avg fare</div><div class="val">$114.87</div><div class="sub">Weighted all segments</div></div>
+    <div class="metric"><div class="lbl">Markets served</div><div class="val">75+</div><div class="sub">Countries</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Passenger split — domestic vs international</div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="c-split-pax" role="img" aria-label="Domestic 80.7%, International 19.3%">Domestic 80.7%, International 19.3%</canvas></div>
+      <div style="display:flex;gap:20px;justify-content:center;margin-top:10px;font-size:12px;color:#666;">
+        <span><span style="display:inline-block;width:10px;height:10px;background:#185FA5;border-radius:2px;margin-right:4px;"></span>Domestic 80.7% — 13.8M</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#1D9E75;border-radius:2px;margin-right:4px;"></span>International 19.3% — 3.3M</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Revenue split — domestic vs international</div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="c-split-rev" role="img" aria-label="Domestic 44.7%, International 55.3%">Domestic 44.7%, International 55.3%</canvas></div>
+      <div style="display:flex;gap:20px;justify-content:center;margin-top:10px;font-size:12px;color:#666;">
+        <span><span style="display:inline-block;width:10px;height:10px;background:#185FA5;border-radius:2px;margin-right:4px;"></span>Domestic 44.7% — $878M</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#1D9E75;border-radius:2px;margin-right:4px;"></span>International 55.3% — $1.08B</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Top 10 routes by passenger volume</div>
+    <div style="position:relative;width:100%;height:260px;"><canvas id="c-top10" role="img" aria-label="Top 10 BLR routes by pax">DEL 2.0M, BOM 1.6M, CCU 837K, HYD 751K, PNQ 632K, AMD 463K, MAA 406K, VNS 378K, LKO 353K, COK 349K</canvas></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Avg fare by segment</div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="c-fare-seg" role="img" aria-label="Avg fares by segment">Domestic $64, SE Asia $130, Middle East $155, UK/Europe $390, USA $782</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Revenue by top markets ($M)</div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="c-rev-market" role="img" aria-label="Revenue by market">Domestic $878M, USA $369M, UK $80M, UAE $67M, Australia $56M, Germany $49M</canvas></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-domestic" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Domestic passengers</div><div class="val">13.8M</div><div class="sub">80.7% of all BLR traffic</div></div>
+    <div class="metric"><div class="lbl">Domestic revenue</div><div class="val">$878M</div><div class="sub">44.7% of total</div></div>
+    <div class="metric"><div class="lbl">Domestic avg fare</div><div class="val">$63.67</div><div class="sub">USD one-way</div></div>
+    <div class="metric"><div class="lbl">Domestic routes</div><div class="val">119</div><div class="sub">Indian destinations</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Top domestic routes — passengers</div><div id="dom-pax-bars"></div></div>
+    <div class="card"><div class="card-title">Top domestic routes — revenue</div><div id="dom-rev-bars"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Domestic route detail — top 15</div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>Destination</th><th>Code</th><th>Passengers</th><th>Share of BLR</th><th>Avg fare</th><th>Revenue</th><th>Yield tier</th></tr></thead><tbody id="dom-table"></tbody></table></div>
+  </div>
+  <div class="insight-grid">
+    <div class="insight blue"><div class="i-title">Delhi is mission-critical</div><div class="i-body">BLR-DEL (2.0M, 11.7% of airport) is 1.3× bigger than BOM and generates $162M — more than BLR's entire US market revenue. Any disruption to this route has outsized impact on total BLR performance.</div></div>
+    <div class="insight green"><div class="i-title">Southern short-haul compression</div><div class="i-body">MAA ($31), IXE ($32), GOI ($37), CCJ ($30), COK ($43) all show low fares. Short sectors with strong rail/road competition drive price suppression. These are likely high-frequency, leisure/VFR travellers.</div></div>
+    <div class="insight amber"><div class="i-title">Eastern corridor strength</div><div class="i-body">CCU (837K), GAU (319K), BBI (303K), PAT (294K), IXB (253K) show BLR's strong east India links. GAU ($89) and IXB ($93) are the highest-yield domestic routes behind DEL ($81).</div></div>
+  </div>
+</div>
+
+<div id="page-international" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">International passengers</div><div class="val">3.3M</div><div class="sub">19.3% of BLR traffic</div></div>
+    <div class="metric"><div class="lbl">International revenue</div><div class="val">$1.08B</div><div class="sub">55.3% of total revenue</div></div>
+    <div class="metric"><div class="lbl">Intl avg fare</div><div class="val">$328.85</div><div class="sub">5.2× domestic avg fare</div></div>
+    <div class="metric"><div class="lbl">International routes</div><div class="val">1,343</div><div class="sub">75+ country markets</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Top countries — passengers</div><div id="intl-pax-bars"></div></div>
+    <div class="card"><div class="card-title">Top countries — revenue</div><div id="intl-rev-bars"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Top international routes — detail</div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>Destination</th><th>Code</th><th>Country</th><th>Passengers</th><th>Avg fare</th><th>Revenue</th><th>Corridor type</th></tr></thead><tbody id="intl-table"></tbody></table></div>
+  </div>
+  <div class="insight-grid">
+    <div class="insight coral"><div class="i-title">UAE: volume without yield</div><div class="i-body">UAE (DXB+AUH+SHJ) = 428K pax but avg fare only $152. Revenue of $65M despite being the top-volume international market. Strong labour/VFR demand suppresses yield — nearly identical to Sri Lanka's $62 fare at the short-haul end.</div></div>
+    <div class="insight blue"><div class="i-title">USA: low volume, dominant revenue</div><div class="i-body">471K pax (14.3% of intl) but $369M revenue (34% of intl revenue). Avg fare $782 is 5× the overall airport avg. BLR-SFO alone at $81M is the top single international revenue route.</div></div>
+    <div class="insight teal"><div class="i-title">UK: best large-market yield</div><div class="i-body">215K pax, $80M revenue, $374 avg fare. LHR ($381 fare, 165K pax) = $63M alone. UK is BLR's highest-yield market at scale — more revenue-per-pax than UAE despite 2× fewer passengers.</div></div>
+  </div>
+</div>
+
+<div id="page-yield" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">Highest fare route</div><div class="val">GPT $2,089</div><div class="sub">Gulfport MS, USA</div></div>
+    <div class="metric"><div class="lbl">Highest revenue route</div><div class="val">DEL $162M</div><div class="sub">Domestic — Delhi</div></div>
+    <div class="metric"><div class="lbl">Top intl revenue route</div><div class="val">SFO $81M</div><div class="sub">San Francisco</div></div>
+    <div class="metric"><div class="lbl">Intl revenue/pax leader</div><div class="val">USA $782</div><div class="sub">Per passenger</div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Fare vs volume scatter — key routes (bubble = revenue size)</div>
+    <div style="position:relative;width:100%;height:320px;"><canvas id="c-bubble" role="img" aria-label="Bubble chart fare vs volume for key BLR routes">Scatter of major routes by pax volume and avg fare</canvas></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:#666;">
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(24,95,165,0.7);border-radius:50%;margin-right:4px;"></span>Domestic</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(216,90,48,0.7);border-radius:50%;margin-right:4px;"></span>Middle East</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(29,158,117,0.7);border-radius:50%;margin-right:4px;"></span>SE Asia</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(127,119,221,0.7);border-radius:50%;margin-right:4px;"></span>Europe/UK</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(186,117,23,0.7);border-radius:50%;margin-right:4px;"></span>USA</span>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Revenue per pax — by market</div><div id="yield-bars"></div></div>
+    <div class="card"><div class="card-title">Top 10 revenue routes</div><table><thead><tr><th>Route</th><th>Pax</th><th>Avg fare</th><th>Revenue</th></tr></thead><tbody id="top-rev-table"></tbody></table></div>
+  </div>
+</div>
+
+<div id="page-usa" class="page">
+  <div class="metric-grid">
+    <div class="metric"><div class="lbl">US total passengers</div><div class="val">471.7K</div><div class="sub">50+ US gateways</div></div>
+    <div class="metric"><div class="lbl">US total revenue</div><div class="val">$368.8M</div><div class="sub">#1 intl revenue market</div></div>
+    <div class="metric"><div class="lbl">US avg fare</div><div class="val">$782</div><div class="sub">12.3× domestic avg</div></div>
+    <div class="metric"><div class="lbl">Top US gateway</div><div class="val">SFO 91.3K</div><div class="sub">$81M revenue</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Top US gateways — passenger volume</div><div id="usa-pax-bars"></div></div>
+    <div class="card"><div class="card-title">Top US gateways — avg fare</div><div id="usa-fare-bars"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">US gateway detail (≥10K pax)</div>
+    <div style="overflow-x:auto;"><table><thead><tr><th>City</th><th>Code</th><th>Passengers</th><th>Avg fare</th><th>Revenue</th><th>Hub type</th></tr></thead><tbody id="usa-table"></tbody></table></div>
+  </div>
+  <div class="insight-grid">
+    <div class="insight blue"><div class="i-title">Silicon Valley corridor</div><div class="i-body">SFO (91K, $883) + SEA (29K, $770) + AUS (11K, $698) = 131K IT hub pax, $110M revenue. SFO alone is BLR's single highest revenue international route.</div></div>
+    <div class="insight green"><div class="i-title">East Coast business</div><div class="i-body">JFK (49K), ORD (26K), IAD (23K), BOS (22K) = 120K pax, ~$84M revenue. Strong corporate/consulting travel base with avg fares $575–$715.</div></div>
+    <div class="insight amber"><div class="i-title">Long-tail US depth</div><div class="i-body">BLR connects to 50+ US cities. Small airports like IAH ($1,033), XNA ($1,417), ICT ($1,505) command premium fares from multi-stop routings. Long-tail contributes ~$50M+ additional revenue.</div></div>
+  </div>
+</div>
+
+<div id="page-insights" class="page">
+  <div class="section-label">Strategic overview</div>
+  <div class="two-col" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Traffic concentration risk</div>
+      <p style="font-size:12px;color:#555;margin-bottom:12px;">Top 5 routes (DEL, BOM, CCU, HYD, PNQ) account for 33.4% of all BLR passengers. DEL alone = 11.7%. High concentration creates vulnerability to disruptions on a small number of metro corridors.</p>
+      <div style="position:relative;width:100%;height:170px;"><canvas id="c-concentration" role="img" aria-label="Pie chart concentration">Top 5: 33.4%, Rest: 66.6%</canvas></div>
+      <div style="display:flex;gap:16px;justify-content:center;margin-top:8px;font-size:11px;color:#666;">
+        <span><span style="display:inline-block;width:10px;height:10px;background:#042C53;border-radius:2px;margin-right:4px;"></span>Top 5 routes 33.4%</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#85B7EB;border-radius:2px;margin-right:4px;"></span>All others 66.6%</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pax share vs revenue share — the asymmetry</div>
+      <p style="font-size:12px;color:#555;margin-bottom:12px;">International = 19.3% of pax but 55.3% of revenue. Revenue-per-pax premium of international over domestic is 5.2×. Protecting international yield — especially USA, UK, Germany, Australia — is critical to BLR's revenue base.</p>
+      <div style="position:relative;width:100%;height:170px;"><canvas id="c-rev-pax" role="img" aria-label="Grouped bar pax vs revenue share">Domestic: 80.7% pax, 44.7% rev. International: 19.3% pax, 55.3% rev.</canvas></div>
+    </div>
+  </div>
+  <div class="section-label">Corridor findings</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">
+    <div class="insight blue"><div class="i-title">DEL is irreplaceable</div><div class="i-body">BLR-DEL at 2.0M pax and $162M is BLR's single biggest economic corridor — nearly 2× BOM. More revenue than the entire US market. Capacity constraints here would have network-wide impact.</div></div>
+    <div class="insight coral"><div class="i-title">Middle East yield dilution</div><div class="i-body">UAE + Saudi = 621K pax, avg fare $168. Revenue quality is low — UAE's $152 fare is just 2.4× domestic. Strong labour/VFR volume but weak premium mix constrains revenue growth.</div></div>
+    <div class="insight green"><div class="i-title">UK — best yield at scale</div><div class="i-body">215K pax, $80M, $374 avg. LHR at $381 fare is BLR's premium long-haul benchmark. Revenue-per-pax is 5.9× domestic vs UAE's 2.4×. Far more economically efficient corridor.</div></div>
+    <div class="insight teal"><div class="i-title">Australia — hidden strength</div><div class="i-body">97K pax, $56M, $573 avg fare — 3rd highest yield country. Strong diaspora + professional travel. Revenue-per-pax nearly matches Japan ($502) and Canada ($497), well above its volume share.</div></div>
+    <div class="insight amber"><div class="i-title">Germany — corporate backbone</div><div class="i-body">119K pax, $49M, $410 avg fare. BLR's German engineering and IT corporate base drives 4th-highest international revenue despite modest volume. FRA + MUC + BER together = strong premium corridor.</div></div>
+    <div class="insight blue"><div class="i-title">Thailand — leisure volume play</div><div class="i-body">260K pax to Thailand (BKK + HKT + others) but only $105 avg fare and $27M revenue. Highest-volume SE Asia market but lowest yield. Growth here adds pax but limited revenue impact.</div></div>
+  </div>
+  <div class="section-label">Market summary</div>
+  <div class="card">
+    <div style="overflow-x:auto;"><table><thead><tr><th>Market</th><th>Passengers</th><th>Revenue</th><th>Avg fare</th><th>Rev/pax vs domestic</th><th>Classification</th></tr></thead><tbody id="summary-table"></tbody></table></div>
+  </div>
+</div>
+
+<script>
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+const tc='#666',gc='rgba(0,0,0,0.06)';
+function makeBars(id,data,color,valFn,lblW){
+  const el=document.getElementById(id);if(!el)return;
+  const max=Math.max(...data.map(d=>d.v));
+  el.innerHTML=data.map(d=>`<div class="bar-row"><span class="bar-lbl" style="width:${lblW||100}px">${d.label}</span><div class="bar-track"><div class="bar-fill" style="width:${(d.v/max*100).toFixed(1)}%;background:${color}"></div></div><span class="bar-val">${valFn(d.v)}</span></div>`).join('');
+}
+const domR=[
+  {code:'DEL',name:'Delhi',pax:1998853,fare:81.29,rev:162490838},
+  {code:'BOM',name:'Mumbai',pax:1550716,fare:56.48,rev:87591258},
+  {code:'CCU',name:'Kolkata',pax:837228,fare:65.98,rev:55239961},
+  {code:'HYD',name:'Hyderabad',pax:751424,fare:41.08,rev:30870082},
+  {code:'PNQ',name:'Pune',pax:632068,fare:51.00,rev:32234351},
+  {code:'AMD',name:'Ahmedabad',pax:462916,fare:57.94,rev:26821258},
+  {code:'MAA',name:'Chennai',pax:406402,fare:30.72,rev:12485950},
+  {code:'VNS',name:'Varanasi',pax:378255,fare:73.92,rev:27961500},
+  {code:'LKO',name:'Lucknow',pax:353453,fare:69.14,rev:24436118},
+  {code:'COK',name:'Kochi',pax:349253,fare:42.59,rev:14875682},
+  {code:'GOI',name:'Goa',pax:331726,fare:36.68,rev:12168919},
+  {code:'GAU',name:'Guwahati',pax:318744,fare:88.52,rev:28215425},
+  {code:'BBI',name:'Bhubaneswar',pax:303271,fare:63.30,rev:19196143},
+  {code:'PAT',name:'Patna',pax:293948,fare:76.33,rev:22437531},
+  {code:'JAI',name:'Jaipur',pax:293247,fare:70.63,rev:20712524},
+];
+const intlR=[
+  {code:'DXB',name:'Dubai',country:'UAE',pax:271747,fare:163.96,rev:44554533,type:'Hub/VFR'},
+  {code:'SIN',name:'Singapore',country:'Singapore',pax:185582,fare:177.46,rev:32933978,type:'Tech/Leisure'},
+  {code:'LHR',name:'London Heathrow',country:'UK',pax:164678,fare:380.54,rev:62666405,type:'Premium'},
+  {code:'AUH',name:'Abu Dhabi',country:'UAE',pax:118223,fare:126.87,rev:14999306,type:'Hub/VFR'},
+  {code:'BKK',name:'Bangkok',country:'Thailand',pax:115996,fare:95.94,rev:11128231,type:'Leisure'},
+  {code:'CMB',name:'Colombo',country:'Sri Lanka',pax:108655,fare:62.32,rev:6770842,type:'VFR'},
+  {code:'SFO',name:'San Francisco',country:'USA',pax:91336,fare:883.49,rev:80694116,type:'Tech'},
+  {code:'KUL',name:'Kuala Lumpur',country:'Malaysia',pax:90551,fare:118.72,rev:10750376,type:'Leisure'},
+  {code:'JED',name:'Jeddah',country:'Saudi Arabia',pax:83729,fare:191.35,rev:16021756,type:'VFR/Pilgrim'},
+  {code:'HKT',name:'Phuket',country:'Thailand',pax:76151,fare:132.12,rev:10060860,type:'Leisure'},
+  {code:'DOH',name:'Doha',country:'Qatar',pax:58165,fare:149.37,rev:8688068,type:'Hub'},
+  {code:'KWI',name:'Kuwait City',country:'Kuwait',pax:58016,fare:148.17,rev:8596332,type:'VFR'},
+  {code:'FRA',name:'Frankfurt',country:'Germany',pax:55969,fare:397.61,rev:22254035,type:'Corporate'},
+  {code:'SYD',name:'Sydney',country:'Australia',pax:49151,fare:589.61,rev:28979909,type:'Diaspora'},
+  {code:'JFK',name:'New York JFK',country:'USA',pax:48845,fare:714.80,rev:34914502,type:'Business'},
+];
+const usaR=[
+  {code:'SFO',city:'San Francisco',pax:91336,fare:883,rev:80694116,hub:'West Coast Tech'},
+  {code:'JFK',city:'New York JFK',pax:48845,fare:715,rev:34914502,hub:'East Coast'},
+  {code:'DFW',city:'Dallas',pax:37411,fare:672,rev:25157182,hub:'South Hub'},
+  {code:'SEA',city:'Seattle',pax:28773,fare:770,rev:22150905,hub:'West Coast Tech'},
+  {code:'ORD',city:'Chicago',pax:26104,fare:773,rev:20184405,hub:'Midwest Hub'},
+  {code:'IAD',city:'Washington DC',pax:23487,fare:576,rev:13519553,hub:'East Coast'},
+  {code:'ATL',city:'Atlanta',pax:23027,fare:593,rev:13644338,hub:'South Hub'},
+  {code:'BOS',city:'Boston',pax:22373,fare:700,rev:15660586,hub:'East Coast'},
+  {code:'LAX',city:'Los Angeles',pax:17642,fare:882,rev:15560279,hub:'West Coast'},
+  {code:'IAH',city:'Houston',pax:15906,fare:1033,rev:16435986,hub:'Energy Hub'},
+  {code:'EWR',city:'Newark',pax:14641,fare:773,rev:11316754,hub:'East Coast'},
+  {code:'DTW',city:'Detroit',pax:12666,fare:550,rev:6965736,hub:'Midwest'},
+  {code:'AUS',city:'Austin',pax:11244,fare:698,rev:7844965,hub:'Tech Hub'},
+];
+const intlC=[
+  {name:'USA',pax:471692,rev:368819684,fare:782},
+  {name:'UAE',pax:441902,rev:67147903,fare:152},
+  {name:'Thailand',pax:259841,rev:27162322,fare:105},
+  {name:'UK',pax:215131,rev:80413003,fare:374},
+  {name:'Singapore',pax:185582,rev:32933978,fare:177},
+  {name:'Saudi Arabia',pax:179215,rev:34012084,fare:190},
+  {name:'Malaysia',pax:137075,rev:16654941,fare:122},
+  {name:'Germany',pax:119244,rev:48843247,fare:410},
+  {name:'Sri Lanka',pax:109423,rev:6803319,fare:62},
+  {name:'Australia',pax:97210,rev:55664477,fare:573},
+  {name:'Japan',pax:67241,rev:33738950,fare:502},
+  {name:'Viet Nam',pax:63537,rev:10047809,fare:158},
+  {name:'Indonesia',pax:62695,rev:14157388,fare:226},
+  {name:'Canada',pax:60893,rev:30276379,fare:497},
+  {name:'France',pax:57935,rev:29402825,fare:508},
+];
+
+window.onload=function(){
+  new Chart(document.getElementById('c-split-pax'),{type:'doughnut',data:{labels:['Domestic','International'],datasets:[{data:[13788571,3299236],backgroundColor:['#185FA5','#1D9E75'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+(ctx.raw/1e6).toFixed(1)+'M ('+(ctx.raw/17087807*100).toFixed(1)+'%)' }}}}});
+  new Chart(document.getElementById('c-split-rev'),{type:'doughnut',data:{labels:['Domestic','International'],datasets:[{data:[877963178,1084961250],backgroundColor:['#185FA5','#1D9E75'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+(ctx.raw/1e6).toFixed(0)+'M ('+(ctx.raw/1962924428*100).toFixed(1)+'%)' }}}}});
+  new Chart(document.getElementById('c-top10'),{type:'bar',data:{labels:['DEL','BOM','CCU','HYD','PNQ','AMD','MAA','VNS','LKO','COK'],datasets:[{label:'Passengers',data:[1998853,1550716,837228,751424,632068,462916,406402,378255,353453,349253],backgroundColor:ctx=>ctx.dataIndex<2?'#042C53':'#378ADD',borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw.toLocaleString()+' pax'}}},scales:{x:{ticks:{color:tc,font:{size:12}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:11},callback:v=>(v/1e6).toFixed(1)+'M'},grid:{color:gc},border:{display:false}}}}});
+  new Chart(document.getElementById('c-fare-seg'),{type:'bar',data:{labels:['Domestic','SE Asia','Middle East','UK/Europe','USA'],datasets:[{label:'Avg fare',data:[64,130,155,390,782],backgroundColor:['#1D9E75','#5DCAA5','#D85A30','#7F77DD','#BA7517'],borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.raw}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>'$'+v},grid:{color:gc},border:{display:false}}}}});
+  new Chart(document.getElementById('c-rev-market'),{type:'bar',data:{labels:['Domestic','USA','UK','UAE','Australia','Germany'],datasets:[{label:'Revenue $M',data:[878,369,80,67,56,49],backgroundColor:['#1D9E75','#BA7517','#7F77DD','#D85A30','#1D9E75','#7F77DD'],borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.raw+'M'}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>'$'+v+'M'},grid:{color:gc},border:{display:false}}}}});
+
+  makeBars('dom-pax-bars',domR.slice(0,12).map(d=>({label:d.code+' '+d.name,v:d.pax})),'#185FA5',v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K',120);
+  makeBars('dom-rev-bars',domR.slice(0,12).map(d=>({label:d.code+' '+d.name,v:d.rev})),'#0F6E56',v=>'$'+(v/1e6).toFixed(0)+'M',120);
+
+  const dt=document.getElementById('dom-table');
+  domR.forEach((r,i)=>{const t=r.fare>70?'<span class="badge badge-blue">Premium</span>':r.fare>45?'<span class="badge badge-amber">Mid</span>':'<span class="badge badge-green">Low</span>';dt.innerHTML+=`<tr><td>${i+1}</td><td>${r.name}</td><td>${r.code}</td><td>${r.pax.toLocaleString()}</td><td>${(r.pax/17087807*100).toFixed(1)}%</td><td>$${r.fare.toFixed(0)}</td><td>$${(r.rev/1e6).toFixed(1)}M</td><td>${t}</td></tr>`;});
+
+  const byPax=[...intlC].sort((a,b)=>b.pax-a.pax);
+  const byRev=[...intlC].sort((a,b)=>b.rev-a.rev);
+  makeBars('intl-pax-bars',byPax.slice(0,10).map(d=>({label:d.name,v:d.pax})),'#185FA5',v=>(v/1e3).toFixed(0)+'K',95);
+  makeBars('intl-rev-bars',byRev.slice(0,10).map(d=>({label:d.name,v:d.rev})),'#0F6E56',v=>'$'+(v/1e6).toFixed(0)+'M',95);
+
+  const it=document.getElementById('intl-table');
+  intlR.forEach((r,i)=>{const cls=r.type.includes('Premium')||r.type.includes('Tech')||r.type.includes('Corp')?'badge-blue':r.type.includes('Leisure')?'badge-teal':r.type.includes('VFR')?'badge-amber':'badge-coral';it.innerHTML+=`<tr><td>${i+1}</td><td>${r.name}</td><td>${r.code}</td><td>${r.country}</td><td>${r.pax.toLocaleString()}</td><td>$${r.fare.toFixed(0)}</td><td>$${(r.rev/1e6).toFixed(1)}M</td><td><span class="badge ${cls}">${r.type}</span></td></tr>`;});
+
+  const bd=[
+    {l:'DEL',x:1999,y:81,r:13,c:'rgba(24,95,165,0.7)'},{l:'BOM',x:1551,y:56,r:10,c:'rgba(24,95,165,0.7)'},
+    {l:'CCU',x:837,y:66,r:8,c:'rgba(24,95,165,0.7)'},{l:'DXB',x:272,y:164,r:7,c:'rgba(216,90,48,0.7)'},
+    {l:'SIN',x:186,y:177,r:6,c:'rgba(29,158,117,0.7)'},{l:'LHR',x:165,y:381,r:8,c:'rgba(127,119,221,0.7)'},
+    {l:'SFO',x:91,y:883,r:10,c:'rgba(186,117,23,0.7)'},{l:'BKK',x:116,y:96,r:4,c:'rgba(29,158,117,0.7)'},
+    {l:'JFK',x:49,y:715,r:6,c:'rgba(186,117,23,0.7)'},{l:'FRA',x:56,y:398,r:5,c:'rgba(127,119,221,0.7)'},
+    {l:'SYD',x:49,y:590,r:5,c:'rgba(127,119,221,0.7)'},{l:'AUH',x:118,y:127,r:4,c:'rgba(216,90,48,0.7)'},
+  ];
+  new Chart(document.getElementById('c-bubble'),{type:'bubble',data:{datasets:bd.map(d=>({label:d.l,data:[{x:d.x,y:d.y,r:d.r}],backgroundColor:d.c,borderColor:'transparent'}))},options:{responsive:true,maintainAspectRatio:false,layout:{padding:20},plugins:{legend:{display:false},tooltip:{callbacks:{title:ctx=>ctx[0].dataset.label,label:ctx=>`Pax: ${(ctx.raw.x*1000).toLocaleString()} | Fare: $${ctx.raw.y}`}}},scales:{x:{title:{display:true,text:'Passengers (thousands)',color:tc,font:{size:11}},ticks:{color:tc,font:{size:10},callback:v=>v+'K'},grid:{color:gc},border:{display:false},min:0},y:{title:{display:true,text:'Avg fare (USD)',color:tc,font:{size:11}},ticks:{color:tc,font:{size:10},callback:v=>'$'+v},grid:{color:gc},border:{display:false},min:0}}}});
+
+  const yd=[{l:'USA',v:782},{l:'Australia',v:573},{l:'Japan',v:502},{l:'France',v:508},{l:'Canada',v:497},{l:'Germany',v:410},{l:'UK',v:374},{l:'Indonesia',v:226},{l:'Saudi Arabia',v:190},{l:'Singapore',v:177},{l:'UAE',v:152},{l:'Thailand',v:105},{l:'Domestic',v:64}].sort((a,b)=>b.v-a.v);
+  makeBars('yield-bars',yd.map(d=>({label:d.l,v:d.v})),'#534AB7',v=>'$'+v+'/pax',95);
+
+  const tr=[
+    {r:'BLR-DEL',p:1998853,f:'$81',rv:162490838},{r:'BLR-BOM',p:1550716,f:'$56',rv:87591258},
+    {r:'BLR-SFO',p:91336,f:'$883',rv:80694116},{r:'BLR-LHR',p:164678,f:'$381',rv:62666405},
+    {r:'BLR-CCU',p:837228,f:'$66',rv:55239961},{r:'BLR-DXB',p:271747,f:'$164',rv:44554533},
+    {r:'BLR-JFK',p:48845,f:'$715',rv:34914502},{r:'BLR-SIN',p:185582,f:'$177',rv:32933978},
+    {r:'BLR-PNQ',p:632068,f:'$51',rv:32234351},{r:'BLR-HYD',p:751424,f:'$41',rv:30870082},
+  ];
+  const tt=document.getElementById('top-rev-table');
+  tr.forEach(r=>{tt.innerHTML+=`<tr><td>${r.r}</td><td>${(r.p/1000).toFixed(0)}K</td><td>${r.f}</td><td>$${(r.rv/1e6).toFixed(0)}M</td></tr>`;});
+
+  makeBars('usa-pax-bars',usaR.slice(0,8).map(d=>({label:d.code+' '+d.city,v:d.pax})),'#185FA5',v=>(v/1e3).toFixed(0)+'K',110);
+  makeBars('usa-fare-bars',[...usaR].sort((a,b)=>b.fare-a.fare).slice(0,8).map(d=>({label:d.code+' '+d.city,v:d.fare})),'#854F0B',v=>'$'+v.toLocaleString(),110);
+
+  const ut=document.getElementById('usa-table');
+  usaR.forEach(r=>{ut.innerHTML+=`<tr><td>${r.city}</td><td>${r.code}</td><td>${r.pax.toLocaleString()}</td><td>$${r.fare.toLocaleString()}</td><td>$${(r.rev/1e6).toFixed(1)}M</td><td><span class="badge badge-blue">${r.hub}</span></td></tr>`;});
+
+  new Chart(document.getElementById('c-concentration'),{type:'doughnut',data:{labels:['Top 5 routes (33.4%)','All others (66.6%)'],datasets:[{data:[5714259,11373548],backgroundColor:['#042C53','#85B7EB'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label}}}}});
+  new Chart(document.getElementById('c-rev-pax'),{type:'bar',data:{labels:['Domestic','International'],datasets:[{label:'Pax share %',data:[80.7,19.3],backgroundColor:'#85B7EB',borderRadius:3},{label:'Revenue share %',data:[44.7,55.3],backgroundColor:'#042C53',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.raw+'%'}}},scales:{x:{ticks:{color:tc,font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:11},callback:v=>v+'%'},grid:{color:gc},border:{display:false},max:100}}}}); 
+
+  const sm=[
+    {m:'India (domestic)',p:13788571,rv:877963178,f:64,cls:'badge-green',lb:'High volume, low yield'},
+    {m:'USA',p:471692,rv:368819684,f:782,cls:'badge-blue',lb:'Premium revenue'},
+    {m:'UK',p:215131,rv:80413003,f:374,cls:'badge-blue',lb:'Premium diaspora'},
+    {m:'UAE',p:441902,rv:67147903,f:152,cls:'badge-amber',lb:'Volume, VFR/labour'},
+    {m:'Australia',p:97210,rv:55664477,f:573,cls:'badge-blue',lb:'Premium diaspora'},
+    {m:'Germany',p:119244,rv:48843247,f:410,cls:'badge-blue',lb:'Corporate'},
+    {m:'Saudi Arabia',p:179215,rv:34012084,f:190,cls:'badge-amber',lb:'VFR/pilgrim'},
+    {m:'Singapore',p:185582,rv:32933978,f:177,cls:'badge-teal',lb:'Tech/hub leisure'},
+    {m:'Japan',p:67241,rv:33738950,f:502,cls:'badge-blue',lb:'Corporate niche'},
+    {m:'Canada',p:60893,rv:30276379,f:497,cls:'badge-blue',lb:'Diaspora'},
+    {m:'France',p:57935,rv:29402825,f:508,cls:'badge-blue',lb:'Leisure/corporate'},
+    {m:'Thailand',p:259841,rv:27162322,f:105,cls:'badge-teal',lb:'Leisure growth'},
+    {m:'Malaysia',p:137075,rv:16654941,f:122,cls:'badge-teal',lb:'Leisure/VFR'},
+    {m:'Indonesia',p:62695,rv:14157388,f:226,cls:'badge-teal',lb:'Leisure'},
+    {m:'Sri Lanka',p:109423,rv:6803319,f:62,cls:'badge-green',lb:'Short-haul VFR'},
+  ];
+  const st=document.getElementById('summary-table');
+  sm.forEach(r=>{st.innerHTML+=`<tr><td>${r.m}</td><td>${(r.p/1000).toFixed(0)}K</td><td>$${(r.rv/1e6).toFixed(0)}M</td><td>$${r.f}</td><td>${(r.f/64).toFixed(1)}×</td><td><span class="badge ${r.cls}">${r.lb}</span></td></tr>`;});
+};
+</script>
+</body>
+</html>

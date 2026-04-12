@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviation Analytics Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0e1117;
+    --ink-2: #3a3f4a;
+    --ink-3: #7a8090;
+    --sky: #e8f0f8;
+    --accent: #1a56db;
+    --accent-light: #dbeafe;
+    --gold: #b45309;
+    --gold-light: #fef3c7;
+    --teal: #0f766e;
+    --teal-light: #ccfbf1;
+    --surface: #ffffff;
+    --bg: #f4f5f7;
+    --border: rgba(14,17,23,0.08);
+    --radius: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo {
+    width: 28px; height: 28px;
+    background: var(--ink);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-logo svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2; }
+  .nav-name { font-size: 14px; font-weight: 500; color: var(--ink); letter-spacing: -0.01em; }
+  .nav-right { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-3); }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 40px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-light);
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p {
+    font-size: 17px; color: var(--ink-2); max-width: 560px; line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* STATS STRIP */
+  .stats-strip {
+    max-width: 900px; margin: 0 auto 60px;
+    padding: 0 40px;
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); }
+  .stat-lbl { font-size: 12px; color: var(--ink-3); font-weight: 400; }
+  .stat-div { width: 1px; background: var(--border); align-self: stretch; }
+
+  /* SECTION LABEL */
+  .section-head {
+    max-width: 900px; margin: 0 auto 20px; padding: 0 40px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* CARDS GRID */
+  .grid {
+    max-width: 900px; margin: 0 auto 32px; padding: 0 40px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+  }
+
+  /* LIVE CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-decoration: none;
+    display: flex; flex-direction: column; gap: 0;
+    transition: box-shadow .2s, transform .2s, border-color .2s;
+    position: relative; overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(14,17,23,0.10);
+    border-color: rgba(14,17,23,0.15);
+  }
+  .card-accent-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .card.blue .card-accent-bar { background: var(--accent); }
+  .card.gold .card-accent-bar { background: var(--gold); }
+  .card.teal .card-accent-bar { background: var(--teal); }
+  .card.gray .card-accent-bar { background: #94a3b8; }
+
+  .card-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em;
+    padding: 3px 8px; border-radius: 4px; margin-bottom: 16px; width: fit-content;
+  }
+  .card.blue .card-badge { background: var(--accent-light); color: var(--accent); }
+  .card.gold .card-badge { background: var(--gold-light); color: var(--gold); }
+  .card.teal .card-badge { background: var(--teal-light); color: var(--teal); }
+  .card.gray .card-badge { background: #f1f5f9; color: #64748b; }
+
+  .card-badge-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .card.blue .card-badge-dot { background: var(--accent); }
+  .card.gold .card-badge-dot { background: var(--gold); }
+  .card.teal .card-badge-dot { background: var(--teal); }
+  .card.gray .card-badge-dot { background: #94a3b8; }
+
+  .card-source { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; }
+  .card h2 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 8px; line-height: 1.2; }
+  .card p { font-size: 13px; color: var(--ink-2); line-height: 1.6; font-weight: 300; flex: 1; }
+
+  .card-meta {
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-stats { display: flex; gap: 16px; }
+  .card-stat { display: flex; flex-direction: column; gap: 1px; }
+  .card-stat-val { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .card-stat-lbl { font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+  .card-arrow {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .card.blue .card-arrow { background: var(--accent-light); }
+  .card.gold .card-arrow { background: var(--gold-light); }
+  .card.teal .card-arrow { background: var(--teal-light); }
+  .card.gray .card-arrow { background: #f1f5f9; }
+  .card:hover .card-arrow { background: var(--ink); }
+  .card-arrow svg { width: 14px; height: 14px; }
+  .card:hover .card-arrow svg path { stroke: #fff; }
+  .card-arrow svg path { stroke: var(--ink); stroke-width: 2; fill: none; transition: stroke .2s; }
+
+  /* COMING SOON CARD */
+  .card.soon { cursor: default; }
+  .card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .card.soon .card-body { opacity: 0.5; }
+  .soon-tag {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em;
+    background: #f1f5f9; color: #94a3b8; padding: 3px 8px; border-radius: 4px;
+  }
+
+  /* PIPELINE */
+  .pipeline {
+    max-width: 900px; margin: 0 auto 60px; padding: 0 40px;
+  }
+  .pipeline-list { display: flex; flex-direction: column; gap: 1px; }
+  .pipeline-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 16px;
+    font-size: 13px;
+  }
+  .pipeline-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+  .pipeline-item:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+  .pipeline-item:not(:last-child) { border-bottom: none; }
+  .pi-num { font-family: 'DM Serif Display', serif; font-size: 18px; color: #cbd5e1; width: 28px; flex-shrink: 0; }
+  .pi-name { font-weight: 500; color: var(--ink); flex: 1; }
+  .pi-desc { font-size: 12px; color: var(--ink-3); }
+  .pi-status {
+    font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em;
+    padding: 3px 8px; border-radius: 4px; flex-shrink: 0;
+  }
+  .pi-status.live { background: #dcfce7; color: #15803d; }
+  .pi-status.soon { background: #fef9c3; color: #a16207; }
+  .pi-status.planned { background: #f1f5f9; color: #64748b; }
+
+  /* FOOTER */
+  footer {
+    max-width: 900px; margin: 0 auto; padding: 32px 40px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  }
+  .footer-left { font-size: 12px; color: var(--ink-3); }
+  .footer-left strong { color: var(--ink-2); }
+  .footer-right { font-size: 12px; color: var(--ink-3); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero { animation: fadeUp .5s ease both; }
+  .stats-strip { animation: fadeUp .5s .1s ease both; }
+  .grid { animation: fadeUp .5s .15s ease both; }
+  .pipeline { animation: fadeUp .5s .2s ease both; }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 20px; }
+    .hero, .stats-strip, .section-head, .grid, .pipeline, footer { padding-left: 20px; padding-right: 20px; }
+    .hero { padding-top: 48px; }
+    .stats-strip { gap: 20px; }
+    .stat-div { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 16 16"><path d="M2 10L8 3L14 10M5 13h6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <span class="nav-name">Aviation Analytics</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-dot"></div>
+    Live dashboards
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+    India Aviation Intelligence
+  </div>
+  <h1>Data-driven insights for<br><em>Indian aviation</em></h1>
+  <p>Interactive dashboards built from IATA, AAI, DGCA and other primary sources. Updated regularly as new data becomes available.</p>
+</section>
+
+<div class="stats-strip">
+  <div class="stat"><span class="stat-num">17.1M</span><span class="stat-lbl">BLR pax analysed</span></div>
+  <div class="stat-div"></div>
+  <div class="stat"><span class="stat-num">1,462</span><span class="stat-lbl">OD pairs mapped</span></div>
+  <div class="stat-div"></div>
+  <div class="stat"><span class="stat-num">75+</span><span class="stat-lbl">Countries covered</span></div>
+  <div class="stat-div"></div>
+  <div class="stat"><span class="stat-num">$1.96B</span><span class="stat-lbl">Revenue analysed</span></div>
+</div>
+
+<div class="section-head">
+  <span class="section-label">Live dashboards</span>
+  <div class="section-line"></div>
+</div>
+
+<div class="grid">
+
+  <!-- BLR IATA -->
+  <a href="blr-cy25.html" class="card blue">
+    <div class="card-accent-bar"></div>
+    <div class="card-badge"><span class="card-badge-dot"></span>Live</div>
+    <div class="card-source">IATA Airport IS &nbsp;·&nbsp; Directional OD</div>
+    <h2>BLR Passenger Traffic CY2025</h2>
+    <p>Full OD analysis — domestic corridors, international markets, yield benchmarking and US market deep-dive.</p>
+    <div class="card-meta">
+      <div class="card-stats">
+        <div class="card-stat"><span class="card-stat-val">17.1M</span><span class="card-stat-lbl">Passengers</span></div>
+        <div class="card-stat"><span class="card-stat-val">$1.96B</span><span class="card-stat-lbl">Revenue</span></div>
+      </div>
+      <div class="card-arrow">
+        <svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </a>
+
+  <!-- AAI COMING SOON -->
+  <div class="card gold soon">
+    <div class="card-accent-bar"></div>
+    <span class="soon-tag">Coming soon</span>
+    <div class="card-body">
+      <div class="card-badge"><span class="card-badge-dot"></span>Planned</div>
+      <div class="card-source">AAI &nbsp;·&nbsp; Monthly Traffic Statistics</div>
+      <h2>AAI Airport Traffic Data</h2>
+      <p>Pan-India airport traffic — passenger, cargo and aircraft movements across all AAI-managed airports.</p>
+      <div class="card-meta">
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-val">137</span><span class="card-stat-lbl">Airports</span></div>
+          <div class="card-stat"><span class="card-stat-val">Monthly</span><span class="card-stat-lbl">Frequency</span></div>
+        </div>
+        <div class="card-arrow">
+          <svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DGCA COMING SOON -->
+  <div class="card teal soon">
+    <div class="card-accent-bar"></div>
+    <span class="soon-tag">Coming soon</span>
+    <div class="card-body">
+      <div class="card-badge"><span class="card-badge-dot"></span>Planned</div>
+      <div class="card-source">DGCA &nbsp;·&nbsp; Traffic Statistics</div>
+      <h2>DGCA Monthly Statistics</h2>
+      <p>Scheduled domestic and international operations — airline-wise, route-wise seat capacity, load factors and punctuality data.</p>
+      <div class="card-meta">
+        <div class="card-stats">
+          <div class="card-stat"><span class="card-stat-val">All India</span><span class="card-stat-lbl">Coverage</span></div>
+          <div class="card-stat"><span class="card-stat-val">Monthly</span><span class="card-stat-lbl">Frequency</span></div>
+        </div>
+        <div class="card-arrow">
+          <svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-head" style="margin-top:40px;">
+  <span class="section-label">Data pipeline</span>
+  <div class="section-line"></div>
+</div>
+
+<div class="pipeline">
+  <div class="pipeline-list">
+    <div class="pipeline-item">
+      <span class="pi-num">01</span>
+      <span class="pi-name">IATA Airport IS — BLR CY2025</span>
+      <span class="pi-desc">OD traffic, fares, revenue</span>
+      <span class="pi-status live">Live</span>
+    </div>
+    <div class="pipeline-item">
+      <span class="pi-num">02</span>
+      <span class="pi-name">AAI Monthly Traffic Statistics</span>
+      <span class="pi-desc">Pan-India airport movements</span>
+      <span class="pi-status soon">In progress</span>
+    </div>
+    <div class="pipeline-item">
+      <span class="pi-num">03</span>
+      <span class="pi-name">DGCA Monthly Traffic Data</span>
+      <span class="pi-desc">Airline-wise load factors, punctuality</span>
+      <span class="pi-status soon">In progress</span>
+    </div>
+    <div class="pipeline-item">
+      <span class="pi-num">04</span>
+      <span class="pi-name">IATA Airport IS — BLR CY2024</span>
+      <span class="pi-desc">Year-on-year comparison</span>
+      <span class="pi-status planned">Planned</span>
+    </div>
+    <div class="pipeline-item">
+      <span class="pi-num">05</span>
+      <span class="pi-name">OAG Schedule Data</span>
+      <span class="pi-desc">Seat capacity, frequency analysis</span>
+      <span class="pi-status planned">Planned</span>
+    </div>
+    <div class="pipeline-item">
+      <span class="pi-num">06</span>
+      <span class="pi-name">Cirium Fleet & MRO Data</span>
+      <span class="pi-desc">Fleet analysis, maintenance trends</span>
+      <span class="pi-status planned">Planned</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">
+    Built with <strong>Claude + IATA data</strong> &nbsp;·&nbsp; Hosted on Netlify &nbsp;·&nbsp; Updated as new data arrives
+  </div>
+  <div class="footer-right">Aviation Analytics Hub &nbsp;·&nbsp; 2025</div>
+</footer>
+
+</body>
+</html>
