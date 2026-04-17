@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Aviation Analytics — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* shared-base.css — light professional theme */
+:root {
+  --font-sans: 'Sora', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+
+  /* Colors */
+  --ink: #0f1117;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --ink-4: #9ca3af;
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+  --border-2: #d1d5db;
+
+  /* Semantic */
+  --color-text-primary: #0f1117;
+  --color-text-secondary: #6b7280;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f3f4f6;
+  --color-background-info: #eff6ff;
+  --color-text-info: #1d4ed8;
+  --color-border-tertiary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-info: #bfdbfe;
+
+  /* Accents */
+  --blue: #1d4ed8;
+  --blue-light: #eff6ff;
+  --teal: #0d9488;
+  --teal-light: #f0fdfa;
+  --gold: #b45309;
+  --gold-light: #fffbeb;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --green: #15803d;
+  --green-light: #f0fdf4;
+
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo { width: 28px; height: 28px; background: var(--ink); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.nav-logo svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-title-wrap { display: flex; flex-direction: column; gap: 0; }
+.nav-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+.nav-byline { font-size: 10px; font-style: italic; color: var(--ink-3); line-height: 1; font-weight: 300; }
+.nav-back { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); text-decoration: none; font-weight: 500; }
+.nav-back:hover { color: var(--ink); }
+.nav-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-live { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 9px; border-radius: 20px; }
+.nav-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+
+/* PAGE WRAPPER */
+.page { max-width: 960px; margin: 0 auto; padding: 36px 40px 64px; }
+.page.tight { padding-top: 24px; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.page-header-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-3); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .07em; }
+.page-header-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); }
+.page-header h1 { font-family: var(--font-display); font-size: clamp(22px, 3.5vw, 30px); color: var(--ink); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 8px; }
+.page-header h1 em { font-style: italic; color: var(--blue); }
+.page-header-sub { font-size: 13px; color: var(--ink-3); max-width: 560px; font-weight: 400; }
+
+/* SECTION TITLES */
+.section-title { font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; margin: 24px 0 12px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.kpi-label { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; font-weight: 500; }
+.kpi-val { font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
+.kpi-val.teal { color: var(--teal); }
+.kpi-val.amber { color: var(--gold); }
+.kpi-val.red { color: var(--red); }
+.kpi-val.green { color: var(--green); }
+.kpi-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+.kpi-sub.red { color: var(--red); }
+.kpi-sub.green { color: var(--green); }
+.kpi-sub.amber { color: var(--gold); }
+
+/* CHART CARDS */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; }
+.chart-card.full { grid-column: 1 / -1; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.chart-sub { font-size: 11px; color: var(--ink-3); margin-bottom: 12px; }
+.chart-wrap { position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--ink-3); margin-bottom: 10px; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+/* ALERT */
+.alert { background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--border-radius-md); padding: 12px 16px; font-size: 13px; color: #78350f; margin-bottom: 20px; line-height: 1.6; }
+.alert strong { color: #92400e; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.tab { font-size: 12px; font-weight: 500; padding: 5px 14px; border: 1px solid var(--border-2); border-radius: 20px; cursor: pointer; background: transparent; color: var(--ink-3); transition: all .15s; }
+.tab:hover { color: var(--ink); border-color: var(--ink-2); }
+.tab.active { background: var(--blue-light); color: var(--blue); border-color: #bfdbfe; font-weight: 600; }
+
+/* TABLE */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 16px; }
+.table-head { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--ink); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th { text-align: left; color: var(--ink-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; background: var(--surface-2); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface-2); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.badge-red { background: #fef2f2; color: #b91c1c; }
+.badge-green { background: #f0fdf4; color: #15803d; }
+
+/* INSIGHT GRID */
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+.insight-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; letter-spacing: .04em; }
+.tag-eu { background: #ecfdf5; color: #065f46; }
+.tag-na { background: #fffbeb; color: #78350f; }
+.tag-both { background: #eff6ff; color: #1e40af; }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.insight-body { font-size: 12px; color: var(--ink-3); line-height: 1.55; }
+.stat-em { font-weight: 600; color: var(--ink); }
+
+/* BAR ROWS */
+.bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; margin-bottom: 16px; }
+.bar-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+.bar-col-head { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 11px; }
+.bar-label { width: 96px; text-align: right; color: var(--ink-3); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; background: var(--surface-2); border-radius: 3px; height: 14px; }
+.bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-size: 10px; font-weight: 700; min-width: 32px; }
+.bar-val { width: 54px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* FOOTER */
+.site-footer { border-top: 1px solid var(--border); margin-top: 0; }
+.site-footer-inner { max-width: 960px; margin: 0 auto; padding: 24px 40px 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.footer-bio { display: flex; flex-direction: column; gap: 3px; }
+.footer-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.footer-desc { font-size: 12px; color: var(--ink-3); max-width: 480px; }
+.footer-copy { font-size: 11px; color: var(--ink-4); padding-top: 2px; }
+
+/* MOBILE */
+@media(max-width: 640px) {
+  .site-nav, .page, .site-footer-inner { padding-left: 16px; padding-right: 16px; }
+  .kpi-grid, .chart-grid, .insight-grid { grid-template-columns: 1fr 1fr; }
+  .bar-cols { grid-template-columns: 1fr; }
+  .chart-card.full { grid-column: 1; }
+}
+
+
+/* Auth page overrides */
+html, body { height: 100%; }
+body {
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.auth-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.auth-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+
+.auth-header {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.auth-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.auth-logo {
+  width: 34px; height: 34px;
+  background: var(--ink);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.auth-logo svg {
+  width: 16px; height: 16px;
+  fill: none; stroke: #fff; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.auth-site-name {
+  font-size: 14px; font-weight: 700; color: var(--ink);
+  line-height: 1.2;
+}
+.auth-site-by {
+  font-size: 10px; font-style: italic;
+  color: var(--ink-3); font-weight: 300;
+}
+
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.auth-sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.auth-body { padding: 28px 32px 24px; }
+
+/* Tab switcher */
+.auth-tabs {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 22px;
+  gap: 2px;
+}
+.auth-tab {
+  flex: 1;
+  padding: 7px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: all .15s;
+}
+.auth-tab.active {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 14px;
+}
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink);
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+}
+.form-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(29,78,216,0.08);
+}
+.form-input::placeholder { color: var(--ink-4); }
+
+.form-hint {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 11px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  margin-top: 4px;
+  letter-spacing: .01em;
+}
+.btn-primary:hover { background: #1f2937; }
+.btn-primary:active { transform: scale(.99); }
+
+/* Alerts */
+.alert-msg {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 14px;
+  display: none;
+}
+.alert-msg.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.alert-msg.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.alert-msg.show { display: block; }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 18px 0;
+}
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-text { font-size: 11px; color: var(--ink-4); font-weight: 500; white-space: nowrap; }
+
+/* Footer note */
+.auth-footer-note {
+  padding: 16px 32px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--ink-3);
+  text-align: center;
+  line-height: 1.6;
+  background: var(--surface-2);
+}
+
+/* Access info strip */
+.access-strip {
+  max-width: 400px;
+  margin: 16px auto 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.access-chip {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--ink-3);
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 20px;
+}
+.chip-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%; background: var(--blue);
+}
+
+/* User display (when logged in) */
+#logged-in-bar {
+  display: none;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #15803d;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div>
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo-wrap">
+          <div class="auth-logo">
+            <svg viewBox="0 0 16 16"><path d="M2 10L8 3L14 10M5 13h6"/></svg>
+          </div>
+          <div>
+            <div class="auth-site-name">Aviation Analytics</div>
+            <div class="auth-site-by">by Ajay Singh (AJ)</div>
+          </div>
+        </div>
+        <h1 class="auth-title">Data tools for<br>Indian aviation</h1>
+        <p class="auth-sub">Sign in or create an account to access the dashboards.</p>
+      </div>
+
+      <div class="auth-body">
+        <!-- Tab switcher -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+          <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+        </div>
+
+        <!-- Alert messages -->
+        <div class="alert-msg error" id="msg-error"></div>
+        <div class="alert-msg success" id="msg-success"></div>
+        <div id="logged-in-bar"></div>
+
+        <!-- Sign In form -->
+        <div id="form-signin">
+          <div class="form-group">
+            <label class="form-label">Email address</label>
+            <input type="email" class="form-input" id="si-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="si-pass" placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <button class="btn-primary" onclick="doSignIn()">Sign In →</button>
+        </div>
+
+        <!-- Sign Up form -->
+        <div id="form-signup" style="display:none">
+          <div class="form-group">
+            <label class="form-label">Full name</label>
+            <input type="text" class="form-input" id="su-name" placeholder="Your name" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email address</label>
+            <input type="email" class="form-input" id="su-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="su-pass" placeholder="Min 8 characters" autocomplete="new-password">
+            <div class="form-hint">At least 8 characters</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm password</label>
+            <input type="password" class="form-input" id="su-pass2" placeholder="Repeat password" autocomplete="new-password">
+          </div>
+          <button class="btn-primary" onclick="doSignUp()">Create Account →</button>
+        </div>
+      </div>
+
+      <div class="auth-footer-note">
+        This is a personal analytics portfolio by Ajay Singh.<br>
+        Sign up to access live aviation intelligence dashboards.
+      </div>
+    </div>
+
+    <!-- Feature chips below card -->
+    <div class="access-strip">
+      <div class="access-chip"><div class="chip-dot"></div>6 live dashboards</div>
+      <div class="access-chip"><div class="chip-dot"></div>176 intl markets</div>
+      <div class="access-chip"><div class="chip-dot"></div>AI-powered analysis</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Minimal localStorage auth ──────────────────────────────
+const USERS_KEY = 'avia_users_v1';
+const SESSION_KEY = 'avia_session_v1';
+
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveUsers(u) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(u));
+}
+
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function hash(s) {
+  // Simple hash — not cryptographic, fine for portfolio gating
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i);
+    h = h & h;
+  }
+  return h.toString(16);
+}
+
+function showMsg(type, text) {
+  const el = document.getElementById('msg-' + type);
+  const other = document.getElementById('msg-' + (type === 'error' ? 'success' : 'error'));
+  other.classList.remove('show');
+  el.textContent = text;
+  el.classList.add('show');
+}
+
+function clearMsgs() {
+  document.getElementById('msg-error').classList.remove('show');
+  document.getElementById('msg-success').classList.remove('show');
+}
+
+function switchTab(tab) {
+  clearMsgs();
+  document.getElementById('form-signin').style.display = tab === 'signin' ? 'block' : 'none';
+  document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+}
+
+function doSignIn() {
+  clearMsgs();
+  const email = document.getElementById('si-email').value.trim().toLowerCase();
+  const pass = document.getElementById('si-pass').value;
+
+  if (!email || !pass) { showMsg('error', 'Please enter your email and password.'); return; }
+
+  const users = getUsers();
+  if (!users[email]) { showMsg('error', 'No account found with this email. Please sign up.'); return; }
+  if (users[email].hash !== hash(pass)) { showMsg('error', 'Incorrect password. Please try again.'); return; }
+
+  // Save session
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ email, name: users[email].name, ts: Date.now() }));
+  showMsg('success', 'Welcome back, ' + users[email].name + '! Redirecting...');
+
+  setTimeout(() => { window.location.href = 'index.html'; }, 900);
+}
+
+function doSignUp() {
+  clearMsgs();
+  const name = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim().toLowerCase();
+  const pass = document.getElementById('su-pass').value;
+  const pass2 = document.getElementById('su-pass2').value;
+
+  if (!name) { showMsg('error', 'Please enter your name.'); return; }
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showMsg('error', 'Please enter a valid email address.'); return; }
+  if (pass.length < 8) { showMsg('error', 'Password must be at least 8 characters.'); return; }
+  if (pass !== pass2) { showMsg('error', 'Passwords do not match.'); return; }
+
+  const users = getUsers();
+  if (users[email]) { showMsg('error', 'An account already exists with this email. Please sign in.'); return; }
+
+  users[email] = { name, hash: hash(pass), created: Date.now() };
+  saveUsers(users);
+
+  // Auto sign in
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ email, name, ts: Date.now() }));
+  showMsg('success', 'Account created! Welcome, ' + name + '. Redirecting...');
+
+  setTimeout(() => { window.location.href = 'index.html'; }, 900);
+}
+
+// Allow Enter key on all inputs
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const active = document.getElementById('form-signin').style.display !== 'none' ? 'signin' : 'signup';
+  if (active === 'signin') doSignIn();
+  else doSignUp();
+});
+
+// If already logged in, redirect
+const session = getSession();
+if (session) {
+  document.getElementById('logged-in-bar').style.display = 'block';
+  document.getElementById('logged-in-bar').innerHTML =
+    '✓ Signed in as <strong>' + session.name + '</strong> (' + session.email + ') — <a href="index.html" style="color:#15803d;font-weight:700">Go to dashboards →</a> or <a href="#" onclick="signOut()" style="color:#6b7280">Sign out</a>';
+}
+
+function signOut() {
+  localStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+</script>
+</body>
+</html>

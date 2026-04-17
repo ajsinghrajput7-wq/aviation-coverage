@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviation Analytics — Ajay Singh</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* shared-base.css — light professional theme */
+:root {
+  --font-sans: 'Sora', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+
+  /* Colors */
+  --ink: #0f1117;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --ink-4: #9ca3af;
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+  --border-2: #d1d5db;
+
+  /* Semantic */
+  --color-text-primary: #0f1117;
+  --color-text-secondary: #6b7280;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f3f4f6;
+  --color-background-info: #eff6ff;
+  --color-text-info: #1d4ed8;
+  --color-border-tertiary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-info: #bfdbfe;
+
+  /* Accents */
+  --blue: #1d4ed8;
+  --blue-light: #eff6ff;
+  --teal: #0d9488;
+  --teal-light: #f0fdfa;
+  --gold: #b45309;
+  --gold-light: #fffbeb;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --green: #15803d;
+  --green-light: #f0fdf4;
+
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo { width: 28px; height: 28px; background: var(--ink); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.nav-logo svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-title-wrap { display: flex; flex-direction: column; gap: 0; }
+.nav-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+.nav-byline { font-size: 10px; font-style: italic; color: var(--ink-3); line-height: 1; font-weight: 300; }
+.nav-back { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); text-decoration: none; font-weight: 500; }
+.nav-back:hover { color: var(--ink); }
+.nav-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-live { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 9px; border-radius: 20px; }
+.nav-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+
+/* PAGE WRAPPER */
+.page { max-width: 960px; margin: 0 auto; padding: 36px 40px 64px; }
+.page.tight { padding-top: 24px; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.page-header-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-3); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .07em; }
+.page-header-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); }
+.page-header h1 { font-family: var(--font-display); font-size: clamp(22px, 3.5vw, 30px); color: var(--ink); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 8px; }
+.page-header h1 em { font-style: italic; color: var(--blue); }
+.page-header-sub { font-size: 13px; color: var(--ink-3); max-width: 560px; font-weight: 400; }
+
+/* SECTION TITLES */
+.section-title { font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; margin: 24px 0 12px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.kpi-label { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; font-weight: 500; }
+.kpi-val { font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
+.kpi-val.teal { color: var(--teal); }
+.kpi-val.amber { color: var(--gold); }
+.kpi-val.red { color: var(--red); }
+.kpi-val.green { color: var(--green); }
+.kpi-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+.kpi-sub.red { color: var(--red); }
+.kpi-sub.green { color: var(--green); }
+.kpi-sub.amber { color: var(--gold); }
+
+/* CHART CARDS */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; }
+.chart-card.full { grid-column: 1 / -1; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.chart-sub { font-size: 11px; color: var(--ink-3); margin-bottom: 12px; }
+.chart-wrap { position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--ink-3); margin-bottom: 10px; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+/* ALERT */
+.alert { background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--border-radius-md); padding: 12px 16px; font-size: 13px; color: #78350f; margin-bottom: 20px; line-height: 1.6; }
+.alert strong { color: #92400e; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.tab { font-size: 12px; font-weight: 500; padding: 5px 14px; border: 1px solid var(--border-2); border-radius: 20px; cursor: pointer; background: transparent; color: var(--ink-3); transition: all .15s; }
+.tab:hover { color: var(--ink); border-color: var(--ink-2); }
+.tab.active { background: var(--blue-light); color: var(--blue); border-color: #bfdbfe; font-weight: 600; }
+
+/* TABLE */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 16px; }
+.table-head { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--ink); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th { text-align: left; color: var(--ink-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; background: var(--surface-2); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface-2); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.badge-red { background: #fef2f2; color: #b91c1c; }
+.badge-green { background: #f0fdf4; color: #15803d; }
+
+/* INSIGHT GRID */
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+.insight-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; letter-spacing: .04em; }
+.tag-eu { background: #ecfdf5; color: #065f46; }
+.tag-na { background: #fffbeb; color: #78350f; }
+.tag-both { background: #eff6ff; color: #1e40af; }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.insight-body { font-size: 12px; color: var(--ink-3); line-height: 1.55; }
+.stat-em { font-weight: 600; color: var(--ink); }
+
+/* BAR ROWS */
+.bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; margin-bottom: 16px; }
+.bar-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+.bar-col-head { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 11px; }
+.bar-label { width: 96px; text-align: right; color: var(--ink-3); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; background: var(--surface-2); border-radius: 3px; height: 14px; }
+.bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-size: 10px; font-weight: 700; min-width: 32px; }
+.bar-val { width: 54px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* FOOTER */
+.site-footer { border-top: 1px solid var(--border); margin-top: 0; }
+.site-footer-inner { max-width: 960px; margin: 0 auto; padding: 24px 40px 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.footer-bio { display: flex; flex-direction: column; gap: 3px; }
+.footer-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.footer-desc { font-size: 12px; color: var(--ink-3); max-width: 480px; }
+.footer-copy { font-size: 11px; color: var(--ink-4); padding-top: 2px; }
+
+/* MOBILE */
+@media(max-width: 640px) {
+  .site-nav, .page, .site-footer-inner { padding-left: 16px; padding-right: 16px; }
+  .kpi-grid, .chart-grid, .insight-grid { grid-template-columns: 1fr 1fr; }
+  .bar-cols { grid-template-columns: 1fr; }
+  .chart-card.full { grid-column: 1; }
+}
+
+/* INDEX OVERRIDES */
+body { background: #f8f9fb; }
+.hero { padding: 52px 40px 36px; max-width: 960px; margin: 0 auto; }
+.hero-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #1d4ed8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.hero-eyebrow-bar { width: 20px; height: 1.5px; background: #1d4ed8; }
+.hero h1 { font-family: var(--font-display); font-size: clamp(32px,5vw,48px); line-height: 1.08; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 14px; }
+.hero h1 em { font-style: italic; color: #1d4ed8; }
+.hero-sub { font-size: 15px; color: var(--ink-3); max-width: 500px; line-height: 1.7; font-weight: 300; }
+
+.stats-row { max-width: 960px; margin: 0 auto 40px; padding: 0 40px; display: flex; gap: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.stat-item { flex: 1; padding: 20px 24px; border-right: 1px solid var(--border); }
+.stat-item:last-child { border-right: none; }
+.stat-num { font-family: var(--font-display); font-size: 26px; color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
+.stat-num sup { font-size: 14px; font-family: var(--font-sans); font-weight: 700; vertical-align: super; }
+.stat-lbl { font-size: 11px; color: var(--ink-3); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+
+.sec { max-width: 960px; margin: 0 auto 36px; padding: 0 40px; }
+.sec-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.sec-label::after { content: \'\'; flex: 1; height: 1px; background: var(--border); }
+
+.cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.cards.two { grid-template-columns: repeat(2,1fr); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; text-decoration: none; display: flex; flex-direction: column; position: relative; overflow: hidden; transition: all .2s; }
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border-2); }
+.card.soon { opacity: .55; cursor: default; }
+.card.soon:hover { transform: none; box-shadow: none; }
+.card::before { content: \'\'; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.card.blue::before { background: linear-gradient(90deg,#1d4ed8,#60a5fa); }
+.card.gold::before { background: linear-gradient(90deg,#b45309,#f59e0b); }
+.card.teal::before { background: linear-gradient(90deg,#0d9488,#2dd4bf); }
+.card.gray::before { background: var(--border-2); }
+
+.card-badge { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; padding: 3px 9px; border-radius: 20px; margin-bottom: 14px; width: fit-content; display: flex; align-items: center; gap: 5px; }
+.card.blue .card-badge { background: #eff6ff; color: #1d4ed8; }
+.card.gold .card-badge { background: #fffbeb; color: #b45309; }
+.card.teal .card-badge { background: #f0fdfa; color: #0d9488; }
+.card.gray .card-badge { background: var(--surface-2); color: var(--ink-3); }
+.card-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+.card-src { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; font-weight: 500; }
+.card h2 { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 8px; line-height: 1.3; letter-spacing: -0.01em; }
+.card p { font-size: 12.5px; color: var(--ink-3); line-height: 1.6; flex: 1; }
+.card-foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-stats { display: flex; gap: 16px; }
+.cs-val { font-size: 13px; font-weight: 700; color: var(--ink); display: block; }
+.cs-lbl { font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.card-arr { width: 28px; height: 28px; border-radius: 8px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s; }
+.card:hover .card-arr { background: var(--ink); }
+.card-arr svg { width: 13px; height: 13px; fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.card:hover .card-arr svg { stroke: #fff; }
+.soon-pill { position: absolute; top: 18px; right: 18px; font-size: 10px; font-weight: 600; background: var(--surface-2); color: var(--ink-3); padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: .06em; }
+
+.pipeline { max-width: 960px; margin: 0 auto 0; padding: 0 40px; }
+.pipe-list { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.pipe-row { display: flex; align-items: center; gap: 14px; padding: 13px 20px; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.pipe-row:last-child { border-bottom: none; }
+.pipe-row:hover { background: #f9fafb; }
+.p-num { font-size: 12px; font-weight: 700; color: #d1d5db; width: 22px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.p-name { font-weight: 600; color: var(--ink-2); flex: 1; }
+.p-desc { font-size: 11px; color: var(--ink-3); min-width: 180px; text-align: right; }
+.p-status { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; padding: 3px 10px; border-radius: 6px; flex-shrink: 0; min-width: 70px; text-align: center; }
+.p-live { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.p-soon { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.p-plan { background: var(--surface-2); color: var(--ink-3); border: 1px solid var(--border-2); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.hero { animation: fadeUp .5s ease both; }
+.stats-row { animation: fadeUp .5s .08s ease both; }
+.sec { animation: fadeUp .5s .12s ease both; }
+
+@media(max-width:640px){
+  .site-nav,.hero,.stats-row,.sec,.pipeline,.site-footer-inner{padding-left:16px;padding-right:16px}
+  .hero{padding-top:36px}
+  .stats-row{flex-wrap:wrap}
+  .stat-item{min-width:45%;border-bottom:1px solid var(--border)}
+  .cards,.cards.two{grid-template-columns:1fr}
+  .p-desc{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10L8 3L14 10M5 13h6"/></svg></div>
+    <div class="nav-title-wrap">
+      <span class="nav-title">Aviation Analytics</span>
+      <span class="nav-byline">by Ajay Singh (AJ)</span>
+    </div>
+  </a>
+  <div class="nav-live"><div class="nav-live-dot"></div>Live</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow"><div class="hero-eyebrow-bar"></div>India Aviation Intelligence</div>
+  <h1>Data tools for<br><em>Indian aviation</em></h1>
+  <p class="hero-sub">Interactive dashboards and network tools built from IATA, AAI, OAG and DGCA primary sources — for analysts, planners and strategists.</p>
+</section>
+
+<div class="stats-row">
+  <div class="stat-item"><div class="stat-num">6<sup>+</sup></div><div class="stat-lbl">Live tools</div></div>
+  <div class="stat-item"><div class="stat-num">4</div><div class="stat-lbl">Data sources</div></div>
+  <div class="stat-item"><div class="stat-num">35<sup>+</sup></div><div class="stat-lbl">Airports</div></div>
+  <div class="stat-item"><div class="stat-num">18</div><div class="stat-lbl">Years of data</div></div>
+  <div class="stat-item"><div class="stat-num">75<sup>+</sup></div><div class="stat-lbl">Countries</div></div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">BLR Analysis</div>
+  <div class="cards">
+
+    <a href="blr-intl-traffic.html" class="card blue">
+      <div class="card-badge"><span class="card-badge-dot"></span>New</div>
+      <div class="card-src">IATA Airport IS · 176 International Markets</div>
+      <h2>BLR International Traffic — All Markets CY2025</h2>
+      <p>Full market-level breakdown — 176 destinations, regional split, YoY growth, nonstop connectivity gaps and operating airlines.</p>
+      <div class="card-foot">
+        <div class="card-stats">
+          <div><span class="cs-val">6.15M</span><span class="cs-lbl">Intl pax</span></div>
+          <div><span class="cs-val">176</span><span class="cs-lbl">Markets</span></div>
+        </div>
+        <div class="card-arr"><svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+      </div>
+    </a>
+
+    <a href="blr-cy25.html" class="card blue">
+      <div class="card-badge"><span class="card-badge-dot"></span>Live</div>
+      <div class="card-src">IATA Airport IS · Directional OD</div>
+      <h2>BLR Passenger Traffic CY2025</h2>
+      <p>Full OD analysis — domestic corridors, international markets, yield benchmarking and US market deep-dive.</p>
+      <div class="card-foot">
+        <div class="card-stats">
+          <div><span class="cs-val">17.1M</span><span class="cs-lbl">Passengers</span></div>
+          <div><span class="cs-val">$1.96B</span><span class="cs-lbl">Revenue</span></div>
+        </div>
+        <div class="card-arr"><svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+      </div>
+    </a>
+
+    <a href="blr-eu-na.html" class="card blue">
+      <div class="card-badge"><span class="card-badge-dot"></span>Live</div>
+      <div class="card-src">IATA Airport IS · Long-Haul</div>
+      <h2>BLR — Europe & North America Traffic</h2>
+      <p>Carrier mix, connection share, fare trends and route-level growth breakdown for BLR's EU and NA corridors.</p>
+      <div class="card-foot">
+        <div class="card-stats">
+          <div><span class="cs-val">797K</span><span class="cs-lbl">EU pax</span></div>
+          <div><span class="cs-val">1.06M</span><span class="cs-lbl">NA pax</span></div>
+        </div>
+        <div class="card-arr"><svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+      </div>
+    </a>
+
+    <a href="me-conflict.html" class="card blue">
+      <div class="card-badge"><span class="card-badge-dot"></span>Live</div>
+      <div class="card-src">IATA · BLR / DEL / BOM · Mar 2026</div>
+      <h2>ME Conflict Impact on India–EU/NA Routes</h2>
+      <p>How the Middle East conflict reshaped India's long-haul connectivity — ME carrier collapse and share shift to EU carriers.</p>
+      <div class="card-foot">
+        <div class="card-stats">
+          <div><span class="cs-val">−380K</span><span class="cs-lbl">Pax via ME</span></div>
+          <div><span class="cs-val">Mar 2026</span><span class="cs-lbl">Analysis</span></div>
+        </div>
+        <div class="card-arr"><svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Network & Historical</div>
+  <div class="cards two">
+
+    <a href="aai-passenger.html" class="card gold">
+      <div class="card-badge"><span class="card-badge-dot"></span>Live</div>
+      <div class="card-src">AAI · Historical Traffic Statistics</div>
+      <h2>AAI Major Airport Traffic FY2008–2025</h2>
+      <p>17-year passenger trends across 8 major airports — growth analysis, CAGR benchmarking and COVID impact study.</p>
+      <div class="card-foot">
+        <div class="card-stats">
+          <div><span class="cs-val">264.5M</span><span class="cs-lbl">FY24-25 pax</span></div>
+          <div><span class="cs-val">17 yrs</span><span class="cs-lbl">Coverage</span></div>
+        </div>
+        <div class="card-arr"><svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+      </div>
+    </a>
+
+    <a href="https://hu-bbanks.vercel.app" target="_blank" rel="noopener" class="card teal">
+      <div class="card-badge"><span class="card-badge-dot"></span>Live</div>
+      <div class="card-src">OAG / IATA Schedule · Interactive Tool</div>
+      <h2>AeroHub — Hub Bank Visualizer</h2>
+      <p>Visualise arrival/departure banks, simulate MCT windows, drag-drop flight blocks and run AI connectivity analysis.</p>
+      <div class="card-foot">
+        <div class="card-stats">
+          <div><span class="cs-val">React App</span><span class="cs-lbl">Interactive</span></div>
+          <div><span class="cs-val">AI-powered</span><span class="cs-lbl">Insights</span></div>
+        </div>
+        <div class="card-arr"><svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Data pipeline</div>
+  <div class="pipeline" style="padding:0">
+    <div class="pipe-list">
+      <div class="pipe-row"><span class="p-num">01</span><span class="p-name">IATA Airport IS — BLR CY2025</span><span class="p-desc">OD traffic · fares · revenue</span><span class="p-status p-live">Live</span></div>
+      <div class="pipe-row"><span class="p-num">02</span><span class="p-name">BLR — Europe & North America Traffic</span><span class="p-desc">Long-haul carrier mix · connection share</span><span class="p-status p-live">Live</span></div>
+      <div class="pipe-row"><span class="p-num">03</span><span class="p-name">ME Conflict Impact — India–EU/NA, Mar 2026</span><span class="p-desc">BLR · DEL · BOM · ME carrier shift</span><span class="p-status p-live">Live</span></div>
+      <div class="pipe-row"><span class="p-num">04</span><span class="p-name">AAI Major Airport Traffic FY2008–2025</span><span class="p-desc">8 airports · 17-year trends · CAGR</span><span class="p-status p-live">Live</span></div>
+      <div class="pipe-row"><span class="p-num">05</span><span class="p-name">AeroHub — Hub Bank Visualizer</span><span class="p-desc">OAG schedule · MCT simulation · AI analysis</span><span class="p-status p-live">Live</span></div>
+      <div class="pipe-row"><span class="p-num">06</span><span class="p-name">DGCA Monthly Traffic Data</span><span class="p-desc">Airline-wise load factors · punctuality</span><span class="p-status p-soon">In progress</span></div>
+      <div class="pipe-row"><span class="p-num">07</span><span class="p-name">IATA Airport IS — BLR CY2024</span><span class="p-desc">Year-on-year comparison</span><span class="p-status p-plan">Planned</span></div>
+      <div class="pipe-row"><span class="p-num">08</span><span class="p-name">Cirium Fleet & MRO Data</span><span class="p-desc">Fleet analysis · maintenance trends</span><span class="p-status p-plan">Planned</span></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer" style="margin-top:48px">
+  <div class="site-footer-inner">
+    <div class="footer-bio">
+      <span class="footer-name">Ajay Singh</span>
+      <span class="footer-desc">Building open data tools for Indian aviation. Currently driving route development &amp; airline marketing at BLR Airport · Previously Unisys (air cargo) · MarketsandMarkets</span>
+    </div>
+    <div class="footer-copy">© 2025 Ajay Singh. All rights reserved.</div>
+  </div>
+</footer>
+
+
+<script>
+// Auth guard — redirect to login if no session
+const _sess = (function() {
+  try { return JSON.parse(localStorage.getItem('avia_session_v1') || 'null'); }
+  catch { return null; }
+})();
+
+if (!_sess) {
+  window.location.replace('auth.html');
+}
+
+// Inject user name + sign out into nav
+document.addEventListener('DOMContentLoaded', function() {
+  if (!_sess) return;
+  const nav = document.querySelector('.nav-right');
+  if (!nav) return;
+  const userEl = document.createElement('div');
+  userEl.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-3)';
+  userEl.innerHTML = '<span style="font-weight:600;color:var(--ink-2)">' + _sess.name + '</span>'
+    + '<button onclick="(function(){localStorage.removeItem('avia_session_v1');window.location.href='auth.html';})()" '
+    + 'style="font-size:11px;font-weight:600;color:#6b7280;background:var(--surface-2);border:1px solid var(--border-2);padding:4px 10px;border-radius:20px;cursor:pointer;">Sign out</button>';
+  nav.prepend(userEl);
+});
+</script>
+</body>
+</html>
