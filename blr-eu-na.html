@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLR — Europe & North America Traffic Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* shared-base.css — light professional theme */
+:root {
+  --font-sans: 'Sora', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+
+  /* Colors */
+  --ink: #0f1117;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --ink-4: #9ca3af;
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+  --border-2: #d1d5db;
+
+  /* Semantic */
+  --color-text-primary: #0f1117;
+  --color-text-secondary: #6b7280;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f3f4f6;
+  --color-background-info: #eff6ff;
+  --color-text-info: #1d4ed8;
+  --color-border-tertiary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-info: #bfdbfe;
+
+  /* Accents */
+  --blue: #1d4ed8;
+  --blue-light: #eff6ff;
+  --teal: #0d9488;
+  --teal-light: #f0fdfa;
+  --gold: #b45309;
+  --gold-light: #fffbeb;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --green: #15803d;
+  --green-light: #f0fdf4;
+
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo { width: 28px; height: 28px; background: var(--ink); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.nav-logo svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-title-wrap { display: flex; flex-direction: column; gap: 0; }
+.nav-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+.nav-byline { font-size: 10px; font-style: italic; color: var(--ink-3); line-height: 1; font-weight: 300; }
+.nav-back { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); text-decoration: none; font-weight: 500; }
+.nav-back:hover { color: var(--ink); }
+.nav-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-live { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 9px; border-radius: 20px; }
+.nav-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+
+/* PAGE WRAPPER */
+.page { max-width: 960px; margin: 0 auto; padding: 36px 40px 64px; }
+.page.tight { padding-top: 24px; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.page-header-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-3); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .07em; }
+.page-header-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); }
+.page-header h1 { font-family: var(--font-display); font-size: clamp(22px, 3.5vw, 30px); color: var(--ink); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 8px; }
+.page-header h1 em { font-style: italic; color: var(--blue); }
+.page-header-sub { font-size: 13px; color: var(--ink-3); max-width: 560px; font-weight: 400; }
+
+/* SECTION TITLES */
+.section-title { font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; margin: 24px 0 12px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.kpi-label { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; font-weight: 500; }
+.kpi-val { font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
+.kpi-val.teal { color: var(--teal); }
+.kpi-val.amber { color: var(--gold); }
+.kpi-val.red { color: var(--red); }
+.kpi-val.green { color: var(--green); }
+.kpi-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+.kpi-sub.red { color: var(--red); }
+.kpi-sub.green { color: var(--green); }
+.kpi-sub.amber { color: var(--gold); }
+
+/* CHART CARDS */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; }
+.chart-card.full { grid-column: 1 / -1; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.chart-sub { font-size: 11px; color: var(--ink-3); margin-bottom: 12px; }
+.chart-wrap { position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--ink-3); margin-bottom: 10px; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+/* ALERT */
+.alert { background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--border-radius-md); padding: 12px 16px; font-size: 13px; color: #78350f; margin-bottom: 20px; line-height: 1.6; }
+.alert strong { color: #92400e; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.tab { font-size: 12px; font-weight: 500; padding: 5px 14px; border: 1px solid var(--border-2); border-radius: 20px; cursor: pointer; background: transparent; color: var(--ink-3); transition: all .15s; }
+.tab:hover { color: var(--ink); border-color: var(--ink-2); }
+.tab.active { background: var(--blue-light); color: var(--blue); border-color: #bfdbfe; font-weight: 600; }
+
+/* TABLE */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 16px; }
+.table-head { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--ink); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th { text-align: left; color: var(--ink-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; background: var(--surface-2); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface-2); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.badge-red { background: #fef2f2; color: #b91c1c; }
+.badge-green { background: #f0fdf4; color: #15803d; }
+
+/* INSIGHT GRID */
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+.insight-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; letter-spacing: .04em; }
+.tag-eu { background: #ecfdf5; color: #065f46; }
+.tag-na { background: #fffbeb; color: #78350f; }
+.tag-both { background: #eff6ff; color: #1e40af; }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.insight-body { font-size: 12px; color: var(--ink-3); line-height: 1.55; }
+.stat-em { font-weight: 600; color: var(--ink); }
+
+/* BAR ROWS */
+.bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; margin-bottom: 16px; }
+.bar-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+.bar-col-head { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 11px; }
+.bar-label { width: 96px; text-align: right; color: var(--ink-3); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; background: var(--surface-2); border-radius: 3px; height: 14px; }
+.bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-size: 10px; font-weight: 700; min-width: 32px; }
+.bar-val { width: 54px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* FOOTER */
+.site-footer { border-top: 1px solid var(--border); margin-top: 0; }
+.site-footer-inner { max-width: 960px; margin: 0 auto; padding: 24px 40px 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.footer-bio { display: flex; flex-direction: column; gap: 3px; }
+.footer-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.footer-desc { font-size: 12px; color: var(--ink-3); max-width: 480px; }
+.footer-copy { font-size: 11px; color: var(--ink-4); padding-top: 2px; }
+
+/* MOBILE */
+@media(max-width: 640px) {
+  .site-nav, .page, .site-footer-inner { padding-left: 16px; padding-right: 16px; }
+  .kpi-grid, .chart-grid, .insight-grid { grid-template-columns: 1fr 1fr; }
+  .bar-cols { grid-template-columns: 1fr; }
+  .chart-card.full { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo"><svg viewBox="0 0 16 16"><path d="M2 10L8 3L14 10M5 13h6"/></svg></div>
+    <div class="nav-title-wrap">
+      <span class="nav-title">Aviation Analytics</span>
+      <span class="nav-byline">by Ajay Singh (AJ)</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg> All dashboards</a>
+    <div class="nav-live"><div class="nav-live-dot"></div>Live</div>
+  </div>
+</nav>
+
+<div class="page tight">
+  <div class="page-header">
+    <div class="page-header-meta">
+      IATA Airport IS <span class="page-header-meta-dot"></span> Directional OD
+      <span class="page-header-meta-dot"></span> BLR
+      <span class="page-header-meta-dot"></span> 2022–2025
+    </div>
+    <h1>BLR Traffic — <em>Europe & North America</em></h1>
+    <p class="page-header-sub">Long-haul corridor analysis: passenger growth, fare trends, carrier mix and route-level breakdown from Kempegowda International Airport.</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">BLR → Europe (2025)</div>
+      <div class="kpi-val teal">797K</div>
+      <div class="kpi-sub">+88% vs 2022 · CAGR 23.4%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">BLR → North America (2025)</div>
+      <div class="kpi-val amber">1.06M</div>
+      <div class="kpi-sub">+49.5% vs 2022 · CAGR 14.3%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">EU avg fare (2025)</div>
+      <div class="kpi-val">$392</div>
+      <div class="kpi-sub amber">↓ from $448 in 2023</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">NA avg fare (2025)</div>
+      <div class="kpi-val">$659</div>
+      <div class="kpi-sub amber">↓ from $733 in 2023</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">Passenger growth — EU vs North America</div>
+      <div class="chart-sub">BLR-origin pax, thousands</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#0d9488"></span>Europe</span>
+        <span><span class="swatch" style="background:#b45309"></span>North America</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c1"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Average fare trend (USD)</div>
+      <div class="chart-sub">Weighted avg fare by year</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#0d9488"></span>Europe</span>
+        <span><span class="swatch" style="background:#b45309"></span>North America</span>
+      </div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Top EU destinations from BLR (2025)</div>
+      <div class="chart-sub">Passengers in thousands</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="c3"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Top NA destinations from BLR (2025)</div>
+      <div class="chart-sub">Passengers in thousands</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="c4"></canvas></div>
+    </div>
+    <div class="chart-card full">
+      <div class="chart-title">Gulf hub dependency — share of BLR traffic routed via ME carriers</div>
+      <div class="chart-sub">Emirates + Qatar Airways + Etihad combined share (%)</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#0d9488"></span>EU routes</span>
+        <span><span class="swatch" style="background:#b45309"></span>NA routes</span>
+      </div>
+      <div class="chart-wrap" style="height:150px"><canvas id="c5"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">Key insights</div>
+  <div class="insight-grid">
+    <div class="insight-card">
+      <span class="insight-tag tag-eu">EU</span>
+      <div class="insight-title">EU is the faster-growing corridor</div>
+      <div class="insight-body">EU pax grew <span class="stat-em">88%</span> in 3 years (2022→2025) vs 49.5% for NA — a <span class="stat-em">CAGR of 23.4%</span>, nearly double the NA rate. Demand is accelerating.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-na">North America</span>
+      <div class="insight-title">US dominates, Canada is gaining</div>
+      <div class="insight-body">USA pax grew 630K→941K (+49%). Canada grew 80K→121K (<span class="stat-em">+51%</span>), outpacing US growth. Toronto (YYZ) is the #5 NA destination from BLR.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-eu">EU</span>
+      <div class="insight-title">Germany is the #1 EU market by far</div>
+      <div class="insight-body">Germany commands <span class="stat-em">~30%</span> of all BLR-EU traffic (235K pax in 2025). Frankfurt alone is the single largest EU destination.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-na">North America</span>
+      <div class="insight-title">SFO is the dominant NA gateway</div>
+      <div class="insight-body">San Francisco accounts for <span class="stat-em">~37%</span> of all BLR-NA traffic — powered by the tech diaspora. Only meaningful direct route from BLR.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-both">Both markets</span>
+      <div class="insight-title">Fares under pressure despite volume growth</div>
+      <div class="insight-body">EU avg fares fell from <span class="stat-em">$448 → $392</span> (2023→2025). NA fell from <span class="stat-em">$733 → $659</span>. Volume-driven, not premium-driven growth.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-both">Both markets</span>
+      <div class="insight-title">Almost no direct connectivity — massive opportunity</div>
+      <div class="insight-body">Only <span class="stat-em">17.4%</span> of BLR-EU traffic is direct. For NA, just <span class="stat-em">4.2%</span> is direct (BLR-SFO only). Every passenger is a hub connection opportunity.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-eu">EU</span>
+      <div class="insight-title">Emerging EU markets growing explosively</div>
+      <div class="insight-body">Poland +82%, Czechia +200%, Croatia +155%, Malta +152%, Athens +110% since 2023. Eastern Europe is underpenetrated but accelerating fast.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-na">North America</span>
+      <div class="insight-title">Secondary US cities surging</div>
+      <div class="insight-body">Austin +49%, Tampa +84%, San Diego +54%, Las Vegas +53%. Tech-hub and lifestyle city growth beyond NY/SF/Chicago is notable.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-eu">EU</span>
+      <div class="insight-title">Lufthansa leads EU carriers from BLR</div>
+      <div class="insight-body">Lufthansa carries <span class="stat-em">626K pax</span> (all years) on BLR-EU routes — more than any airline including Gulf carriers. AF (213K) and KLM (182K) follow.</div>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-both">Both markets</span>
+      <div class="insight-title">Gulf hub dependency declining in NA</div>
+      <div class="insight-body">Gulf carriers (EK+QR+EY) carry <span class="stat-em">38%</span> of NA traffic (down from 48% in 2022). European carriers LH, AF, KLM are growing share steadily.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Fastest-growing EU routes from BLR (2023→2025)</div>
+  <div class="bar-section">
+    <div class="bar-cols">
+      <div>
+        <div class="bar-col-head"><span class="swatch" style="background:#0d9488;border-radius:50%"></span>High growth</div>
+        <div class="bar-row"><span class="bar-label">Krakow (KRK)</span><span class="bar-track"><span class="bar-fill" style="width:96%;background:#0d9488;color:#fff">+241%</span></span><span class="bar-val">19.8K</span></div>
+        <div class="bar-row"><span class="bar-label">Malta (MLA)</span><span class="bar-track"><span class="bar-fill" style="width:61%;background:#0d9488;color:#fff">+152%</span></span><span class="bar-val">27K</span></div>
+        <div class="bar-row"><span class="bar-label">Athens (ATH)</span><span class="bar-track"><span class="bar-fill" style="width:44%;background:#0d9488;color:#fff">+110%</span></span><span class="bar-val">25.7K</span></div>
+        <div class="bar-row"><span class="bar-label">Warsaw (WAW)</span><span class="bar-track"><span class="bar-fill" style="width:40%;background:#0d9488;color:#fff">+100%</span></span><span class="bar-val">30.8K</span></div>
+        <div class="bar-row"><span class="bar-label">Lisbon (LIS)</span><span class="bar-track"><span class="bar-fill" style="width:38%;background:#0d9488;color:#fff">+96%</span></span><span class="bar-val">23.3K</span></div>
+      </div>
+      <div>
+        <div class="bar-col-head"><span class="swatch" style="background:#60a5fa;border-radius:50%"></span>Strong growth</div>
+        <div class="bar-row"><span class="bar-label">Vienna (VIE)</span><span class="bar-track"><span class="bar-fill" style="width:28%;background:#3b82f6;color:#fff">+71%</span></span><span class="bar-val">63K</span></div>
+        <div class="bar-row"><span class="bar-label">Berlin (BER)</span><span class="bar-track"><span class="bar-fill" style="width:26%;background:#3b82f6;color:#fff">+66%</span></span><span class="bar-val">51.2K</span></div>
+        <div class="bar-row"><span class="bar-label">Barcelona (BCN)</span><span class="bar-track"><span class="bar-fill" style="width:25%;background:#3b82f6;color:#fff">+63%</span></span><span class="bar-val">36.9K</span></div>
+        <div class="bar-row"><span class="bar-label">Copenhagen (CPH)</span><span class="bar-track"><span class="bar-fill" style="width:22%;background:#3b82f6;color:#fff">+55%</span></span><span class="bar-val">26.7K</span></div>
+        <div class="bar-row"><span class="bar-label">Stockholm (ARN)</span><span class="bar-track"><span class="bar-fill" style="width:22%;background:#3b82f6;color:#fff">+55%</span></span><span class="bar-val">31.3K</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Fastest-growing NA routes from BLR (2023→2025)</div>
+  <div class="bar-section">
+    <div class="bar-cols">
+      <div>
+        <div class="bar-col-head"><span class="swatch" style="background:#f59e0b;border-radius:50%"></span>High growth</div>
+        <div class="bar-row"><span class="bar-label">Ottawa (YOW)</span><span class="bar-track"><span class="bar-fill" style="width:97%;background:#f59e0b;color:#fff">+97%</span></span><span class="bar-val">8.6K</span></div>
+        <div class="bar-row"><span class="bar-label">Tampa (TPA)</span><span class="bar-track"><span class="bar-fill" style="width:84%;background:#f59e0b;color:#fff">+84%</span></span><span class="bar-val">28.5K</span></div>
+        <div class="bar-row"><span class="bar-label">San Diego (SAN)</span><span class="bar-track"><span class="bar-fill" style="width:54%;background:#f59e0b;color:#fff">+54%</span></span><span class="bar-val">14.5K</span></div>
+        <div class="bar-row"><span class="bar-label">Las Vegas (LAS)</span><span class="bar-track"><span class="bar-fill" style="width:53%;background:#f59e0b;color:#fff">+53%</span></span><span class="bar-val">11.5K</span></div>
+        <div class="bar-row"><span class="bar-label">Halifax (YHZ)</span><span class="bar-track"><span class="bar-fill" style="width:50%;background:#f59e0b;color:#fff">+50%</span></span><span class="bar-val">14K</span></div>
+      </div>
+      <div>
+        <div class="bar-col-head"><span class="swatch" style="background:#d97706;border-radius:50%"></span>Large markets growing</div>
+        <div class="bar-row"><span class="bar-label">Austin (AUS)</span><span class="bar-track"><span class="bar-fill" style="width:49%;background:#d97706;color:#fff">+49%</span></span><span class="bar-val">70.2K</span></div>
+        <div class="bar-row"><span class="bar-label">Calgary (YYC)</span><span class="bar-track"><span class="bar-fill" style="width:31%;background:#d97706;color:#fff">+31%</span></span><span class="bar-val">27.8K</span></div>
+        <div class="bar-row"><span class="bar-label">Dallas (DFW)</span><span class="bar-track"><span class="bar-fill" style="width:28%;background:#d97706;color:#fff">+28%</span></span><span class="bar-val">293K</span></div>
+        <div class="bar-row"><span class="bar-label">Toronto (YYZ)</span><span class="bar-track"><span class="bar-fill" style="width:23%;background:#d97706;color:#fff">+23%</span></span><span class="bar-val">283K</span></div>
+        <div class="bar-row"><span class="bar-label">Chicago (ORD)</span><span class="bar-track"><span class="bar-fill" style="width:20%;background:#d97706;color:#fff">+20%</span></span><span class="bar-val">284K</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-bio">
+      <span class="footer-name">Ajay Singh</span>
+      <span class="footer-desc">Building open data tools for Indian aviation. Currently driving route development &amp; airline marketing at BLR Airport · Previously Unisys (air cargo) · MarketsandMarkets</span>
+    </div>
+    <div class="footer-copy">© 2025 Ajay Singh. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const EU='#0d9488',NA='#b45309',yrs=['2022','2023','2024','2025'];
+const opts=(yUnit)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{callback:v=>yUnit==='K'?v+'K':yUnit==='$'?'$'+v:v+'%',font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}});
+
+new Chart('c1',{type:'line',data:{labels:yrs,datasets:[
+  {label:'EU',data:[424,589,707,797],borderColor:EU,tension:.35,pointRadius:4,pointBackgroundColor:EU,borderWidth:2,fill:false},
+  {label:'NA',data:[710,843,959,1061],borderColor:NA,tension:.35,pointRadius:4,pointBackgroundColor:NA,borderWidth:2,borderDash:[4,3],fill:false}
+]},options:opts('K')});
+
+new Chart('c2',{type:'line',data:{labels:yrs,datasets:[
+  {label:'EU',data:[435,448,402,392],borderColor:EU,tension:.35,pointRadius:4,pointBackgroundColor:EU,borderWidth:2,fill:false},
+  {label:'NA',data:[706,733,702,659],borderColor:NA,tension:.35,pointRadius:4,pointBackgroundColor:NA,borderWidth:2,borderDash:[4,3],fill:false}
+]},options:opts('$')});
+
+new Chart('c3',{type:'bar',data:{labels:['FRA','CDG','DUB','AMS','ZRH','MUC','CPH','VIE','ARN','FCO'],datasets:[{data:[92,78,60,53,47,42,27,19,19,17],backgroundColor:EU,borderRadius:3}]},options:{...opts('K'),indexAxis:'y',plugins:{legend:{display:false}}}});
+
+new Chart('c4',{type:'bar',data:{labels:['SFO','JFK','DFW','ORD','YYZ','IAD','ATL','SEA','IAH','BOS'],datasets:[{data:[390,296,247,224,214,182,102,100,94,89],backgroundColor:NA,borderRadius:3}]},options:{...opts('K'),indexAxis:'y',plugins:{legend:{display:false}}}});
+
+new Chart('c5',{type:'bar',data:{labels:yrs,datasets:[
+  {label:'EU gulf share',data:[42.3,44.5,40.2,42.4],backgroundColor:EU+'bb',borderRadius:3},
+  {label:'NA gulf share',data:[47.6,44.2,40.9,38.3],backgroundColor:NA+'bb',borderRadius:3}
+]},options:{...opts('%'),plugins:{legend:{display:false}}}});
+</script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ME Conflict Impact — India Aviation, Mar 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* shared-base.css — light professional theme */
+:root {
+  --font-sans: 'Sora', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+
+  /* Colors */
+  --ink: #0f1117;
+  --ink-2: #374151;
+  --ink-3: #6b7280;
+  --ink-4: #9ca3af;
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+  --border-2: #d1d5db;
+
+  /* Semantic */
+  --color-text-primary: #0f1117;
+  --color-text-secondary: #6b7280;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f3f4f6;
+  --color-background-info: #eff6ff;
+  --color-text-info: #1d4ed8;
+  --color-border-tertiary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-info: #bfdbfe;
+
+  /* Accents */
+  --blue: #1d4ed8;
+  --blue-light: #eff6ff;
+  --teal: #0d9488;
+  --teal-light: #f0fdfa;
+  --gold: #b45309;
+  --gold-light: #fffbeb;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --green: #15803d;
+  --green-light: #f0fdf4;
+
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo { width: 28px; height: 28px; background: var(--ink); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.nav-logo svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-title-wrap { display: flex; flex-direction: column; gap: 0; }
+.nav-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+.nav-byline { font-size: 10px; font-style: italic; color: var(--ink-3); line-height: 1; font-weight: 300; }
+.nav-back { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); text-decoration: none; font-weight: 500; }
+.nav-back:hover { color: var(--ink); }
+.nav-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-live { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 9px; border-radius: 20px; }
+.nav-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+
+/* PAGE WRAPPER */
+.page { max-width: 960px; margin: 0 auto; padding: 36px 40px 64px; }
+.page.tight { padding-top: 24px; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.page-header-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-3); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .07em; }
+.page-header-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); }
+.page-header h1 { font-family: var(--font-display); font-size: clamp(22px, 3.5vw, 30px); color: var(--ink); line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 8px; }
+.page-header h1 em { font-style: italic; color: var(--blue); }
+.page-header-sub { font-size: 13px; color: var(--ink-3); max-width: 560px; font-weight: 400; }
+
+/* SECTION TITLES */
+.section-title { font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; margin: 24px 0 12px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.kpi-label { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; font-weight: 500; }
+.kpi-val { font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
+.kpi-val.teal { color: var(--teal); }
+.kpi-val.amber { color: var(--gold); }
+.kpi-val.red { color: var(--red); }
+.kpi-val.green { color: var(--green); }
+.kpi-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+.kpi-sub.red { color: var(--red); }
+.kpi-sub.green { color: var(--green); }
+.kpi-sub.amber { color: var(--gold); }
+
+/* CHART CARDS */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; }
+.chart-card.full { grid-column: 1 / -1; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.chart-sub { font-size: 11px; color: var(--ink-3); margin-bottom: 12px; }
+.chart-wrap { position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--ink-3); margin-bottom: 10px; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+/* ALERT */
+.alert { background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--border-radius-md); padding: 12px 16px; font-size: 13px; color: #78350f; margin-bottom: 20px; line-height: 1.6; }
+.alert strong { color: #92400e; }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.tab { font-size: 12px; font-weight: 500; padding: 5px 14px; border: 1px solid var(--border-2); border-radius: 20px; cursor: pointer; background: transparent; color: var(--ink-3); transition: all .15s; }
+.tab:hover { color: var(--ink); border-color: var(--ink-2); }
+.tab.active { background: var(--blue-light); color: var(--blue); border-color: #bfdbfe; font-weight: 600; }
+
+/* TABLE */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 16px; }
+.table-head { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--ink); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th { text-align: left; color: var(--ink-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; background: var(--surface-2); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--ink-2); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface-2); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.badge-red { background: #fef2f2; color: #b91c1c; }
+.badge-green { background: #f0fdf4; color: #15803d; }
+
+/* INSIGHT GRID */
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+.insight-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; letter-spacing: .04em; }
+.tag-eu { background: #ecfdf5; color: #065f46; }
+.tag-na { background: #fffbeb; color: #78350f; }
+.tag-both { background: #eff6ff; color: #1e40af; }
+.insight-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.insight-body { font-size: 12px; color: var(--ink-3); line-height: 1.55; }
+.stat-em { font-weight: 600; color: var(--ink); }
+
+/* BAR ROWS */
+.bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; margin-bottom: 16px; }
+.bar-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+.bar-col-head { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 11px; }
+.bar-label { width: 96px; text-align: right; color: var(--ink-3); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; background: var(--surface-2); border-radius: 3px; height: 14px; }
+.bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-size: 10px; font-weight: 700; min-width: 32px; }
+.bar-val { width: 54px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* FOOTER */
+.site-footer { border-top: 1px solid var(--border); margin-top: 0; }
+.site-footer-inner { max-width: 960px; margin: 0 auto; padding: 24px 40px 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.footer-bio { display: flex; flex-direction: column; gap: 3px; }
+.footer-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.footer-desc { font-size: 12px; color: var(--ink-3); max-width: 480px; }
+.footer-copy { font-size: 11px; color: var(--ink-4); padding-top: 2px; }
+
+/* MOBILE */
+@media(max-width: 640px) {
+  .site-nav, .page, .site-footer-inner { padding-left: 16px; padding-right: 16px; }
+  .kpi-grid, .chart-grid, .insight-grid { grid-template-columns: 1fr 1fr; }
+  .bar-cols { grid-template-columns: 1fr; }
+  .chart-card.full { grid-column: 1; }
+}
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo"><svg viewBox="0 0 16 16"><path d="M2 10L8 3L14 10M5 13h6"/></svg></div>
+    <div class="nav-title-wrap">
+      <span class="nav-title">Aviation Analytics</span>
+      <span class="nav-byline">by Ajay Singh (AJ)</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg> All dashboards</a>
+    <div class="nav-live"><div class="nav-live-dot"></div>Live</div>
+  </div>
+</nav>
+
+<div class="page tight">
+  <div class="page-header">
+    <div class="page-header-meta">
+      IATA Airport IS <span class="page-header-meta-dot"></span> BLR · DEL · BOM
+      <span class="page-header-meta-dot"></span> Mar 2026 Analysis
+    </div>
+    <h1>ME Conflict Impact — <em>India–EU/NA Routes</em></h1>
+    <p class="page-header-sub">Middle East carrier traffic from India to North America & Europe collapsed in March 2026. QR down 80–84%, EY down 53–59%, EK down 39–43% across BLR/DEL/BOM.</p>
+  </div>
+
+  <div class="alert">
+    <strong>Key finding — Mar 2026:</strong> ME carriers lost ~380K pax on India–NA/EU routes vs Mar 2025. BLR's via-ME share fell from 43.1% to 18.7% — a 24.4 point collapse in a single month. European and East Asian carriers (LH, VS, KL, CX) have absorbed significant share.
+  </div>
+
+  <div class="section-title">BLR — via-ME share on NA + Europe routes</div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Mar 2025 ME share</div>
+      <div class="kpi-val amber">43.1%</div>
+      <div class="kpi-sub">BLR highest pre-crisis</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Mar 2026 ME share</div>
+      <div class="kpi-val red">18.7%</div>
+      <div class="kpi-sub red">▼ 24.4 pts YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Feb 2026 ME share</div>
+      <div class="kpi-val amber">40.0%</div>
+      <div class="kpi-sub">Relatively stable</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total NA+EU pax Mar 26</div>
+      <div class="kpi-val">157K</div>
+      <div class="kpi-sub red">▼ 7.8% vs Mar 25</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">ME routing share % — NA + Europe</div>
+      <div class="chart-sub">BLR · DEL · BOM · India total</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#1d4ed8"></span>Mar 2025</span>
+        <span><span class="swatch" style="background:#dc2626"></span>Mar 2026</span>
+        <span><span class="swatch" style="background:#f59e0b"></span>Feb 2026</span>
+        <span><span class="swatch" style="background:#15803d"></span>Jan 2026</span>
+      </div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c1"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">BLR — via-ME vs non-ME monthly pax</div>
+      <div class="chart-sub">NA + Europe routes, Jan 25 – Mar 26</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#dc2626"></span>Via ME</span>
+        <span><span class="swatch" style="background:#1d4ed8"></span>Non-ME routing</span>
+      </div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="chart-card full">
+      <div class="chart-title">Pax via each ME hub — BLR to NA+EU</div>
+      <div class="chart-sub">DOH · DXB · AUH · BAH · MCT · SHJ</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#1d4ed8"></span>Mar 2025</span>
+        <span><span class="swatch" style="background:#dc2626"></span>Mar 2026</span>
+        <span><span class="swatch" style="background:#f59e0b"></span>Jan 2026</span>
+        <span><span class="swatch" style="background:#0d9488"></span>Feb 2026</span>
+      </div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c3"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">Airline winners — Mar 2026 vs Mar 2025 (NA + Europe)</div>
+  <div class="tabs">
+    <button class="tab active" onclick="showCity('BLR')">BLR</button>
+    <button class="tab" onclick="showCity('DEL')">DEL</button>
+    <button class="tab" onclick="showCity('BOM')">BOM</button>
+    <button class="tab" onclick="showCity('IND')">India total</button>
+  </div>
+
+  <div id="winners-BLR" class="table-wrap">
+    <div class="table-head">Gainers — BLR, NA+Europe (Mar 26 vs Mar 25)</div>
+    <table>
+      <tr><th>Airline</th><th>Role</th><th class="num">Mar 2025</th><th class="num">Mar 2026</th><th class="num">Change</th><th class="num">Chg%</th></tr>
+      <tr><td><strong>LH</strong> Lufthansa</td><td>European hub</td><td class="num">25,849</td><td class="num">36,268</td><td class="num" style="color:#15803d">+10,419</td><td class="num"><span class="badge badge-green">+40%</span></td></tr>
+      <tr><td><strong>VS</strong> Virgin Atlantic</td><td>UK direct</td><td class="num">7,827</td><td class="num">15,137</td><td class="num" style="color:#15803d">+7,310</td><td class="num"><span class="badge badge-green">+93%</span></td></tr>
+      <tr><td><strong>KL</strong> KLM</td><td>European hub</td><td class="num">10,962</td><td class="num">15,996</td><td class="num" style="color:#15803d">+5,034</td><td class="num"><span class="badge badge-green">+46%</span></td></tr>
+      <tr><td><strong>CX</strong> Cathay Pacific</td><td>Asia hub</td><td class="num">2,701</td><td class="num">4,791</td><td class="num" style="color:#15803d">+2,090</td><td class="num"><span class="badge badge-green">+77%</span></td></tr>
+      <tr><td><strong>BA</strong> British Airways</td><td>UK direct</td><td class="num">13,029</td><td class="num">14,877</td><td class="num" style="color:#15803d">+1,848</td><td class="num"><span class="badge badge-green">+14%</span></td></tr>
+      <tr><td><strong>SQ</strong> Singapore Airlines</td><td>Asia hub</td><td class="num">1,788</td><td class="num">3,575</td><td class="num" style="color:#15803d">+1,787</td><td class="num"><span class="badge badge-green">+100%</span></td></tr>
+      <tr><td><strong>ET</strong> Ethiopian</td><td>Africa hub</td><td class="num">56</td><td class="num">1,789</td><td class="num" style="color:#15803d">+1,733</td><td class="num"><span class="badge badge-green">+3,095%</span></td></tr>
+      <tr><td><strong>AF</strong> Air France</td><td>European hub</td><td class="num">11,845</td><td class="num">13,363</td><td class="num" style="color:#15803d">+1,518</td><td class="num"><span class="badge badge-green">+13%</span></td></tr>
+    </table>
+  </div>
+
+  <div id="winners-DEL" class="table-wrap" style="display:none">
+    <div class="table-head">Gainers — DEL, NA+Europe (Mar 26 vs Mar 25)</div>
+    <table>
+      <tr><th>Airline</th><th>Role</th><th class="num">Mar 2025</th><th class="num">Mar 2026</th><th class="num">Change</th><th class="num">Chg%</th></tr>
+      <tr><td><strong>VS</strong> Virgin Atlantic</td><td>UK direct</td><td class="num">30,467</td><td class="num">40,392</td><td class="num" style="color:#15803d">+9,925</td><td class="num"><span class="badge badge-green">+33%</span></td></tr>
+      <tr><td><strong>LH</strong> Lufthansa</td><td>European hub</td><td class="num">39,293</td><td class="num">47,682</td><td class="num" style="color:#15803d">+8,389</td><td class="num"><span class="badge badge-green">+21%</span></td></tr>
+      <tr><td><strong>AF</strong> Air France</td><td>European hub</td><td class="num">21,795</td><td class="num">27,871</td><td class="num" style="color:#15803d">+6,076</td><td class="num"><span class="badge badge-green">+28%</span></td></tr>
+      <tr><td><strong>BA</strong> British Airways</td><td>UK direct</td><td class="num">32,379</td><td class="num">37,302</td><td class="num" style="color:#15803d">+4,923</td><td class="num"><span class="badge badge-green">+15%</span></td></tr>
+      <tr><td><strong>JL</strong> Japan Airlines</td><td>Asia hub</td><td class="num">559</td><td class="num">4,811</td><td class="num" style="color:#15803d">+4,252</td><td class="num"><span class="badge badge-green">+761%</span></td></tr>
+      <tr><td><strong>AZ</strong> ITA Airways</td><td>European hub</td><td class="num">13,698</td><td class="num">17,396</td><td class="num" style="color:#15803d">+3,698</td><td class="num"><span class="badge badge-green">+27%</span></td></tr>
+      <tr><td><strong>SU</strong> Aeroflot</td><td>Russia hub</td><td class="num">15,789</td><td class="num">19,362</td><td class="num" style="color:#15803d">+3,573</td><td class="num"><span class="badge badge-green">+23%</span></td></tr>
+      <tr><td><strong>LX</strong> Swiss</td><td>European hub</td><td class="num">9,973</td><td class="num">13,450</td><td class="num" style="color:#15803d">+3,477</td><td class="num"><span class="badge badge-green">+35%</span></td></tr>
+    </table>
+  </div>
+
+  <div id="winners-BOM" class="table-wrap" style="display:none">
+    <div class="table-head">Gainers — BOM, NA+Europe (Mar 26 vs Mar 25)</div>
+    <table>
+      <tr><th>Airline</th><th>Role</th><th class="num">Mar 2025</th><th class="num">Mar 2026</th><th class="num">Change</th><th class="num">Chg%</th></tr>
+      <tr><td><strong>LH</strong> Lufthansa</td><td>European hub</td><td class="num">22,190</td><td class="num">29,317</td><td class="num" style="color:#15803d">+7,127</td><td class="num"><span class="badge badge-green">+32%</span></td></tr>
+      <tr><td><strong>VS</strong> Virgin Atlantic</td><td>UK direct</td><td class="num">22,679</td><td class="num">29,711</td><td class="num" style="color:#15803d">+7,032</td><td class="num"><span class="badge badge-green">+31%</span></td></tr>
+      <tr><td><strong>KL</strong> KLM</td><td>European hub</td><td class="num">13,128</td><td class="num">17,674</td><td class="num" style="color:#15803d">+4,546</td><td class="num"><span class="badge badge-green">+35%</span></td></tr>
+      <tr><td><strong>AC</strong> Air Canada</td><td>NA direct</td><td class="num">1,612</td><td class="num">6,128</td><td class="num" style="color:#15803d">+4,516</td><td class="num"><span class="badge badge-green">+280%</span></td></tr>
+      <tr><td><strong>ET</strong> Ethiopian</td><td>Africa hub</td><td class="num">360</td><td class="num">4,496</td><td class="num" style="color:#15803d">+4,136</td><td class="num"><span class="badge badge-green">+1,149%</span></td></tr>
+      <tr><td><strong>BA</strong> British Airways</td><td>UK direct</td><td class="num">31,801</td><td class="num">35,686</td><td class="num" style="color:#15803d">+3,885</td><td class="num"><span class="badge badge-green">+12%</span></td></tr>
+    </table>
+  </div>
+
+  <div id="winners-IND" class="table-wrap" style="display:none">
+    <div class="table-head">Gainers — India total, NA+Europe (Mar 26 vs Mar 25)</div>
+    <table>
+      <tr><th>Airline</th><th>Role</th><th class="num">Mar 2025</th><th class="num">Mar 2026</th><th class="num">Change</th><th class="num">Chg%</th></tr>
+      <tr><td><strong>LH</strong> Lufthansa</td><td>European hub</td><td class="num">106,420</td><td class="num">136,870</td><td class="num" style="color:#15803d">+30,450</td><td class="num"><span class="badge badge-green">+29%</span></td></tr>
+      <tr><td><strong>VS</strong> Virgin Atlantic</td><td>UK direct</td><td class="num">60,974</td><td class="num">85,240</td><td class="num" style="color:#15803d">+24,266</td><td class="num"><span class="badge badge-green">+40%</span></td></tr>
+      <tr><td><strong>KL</strong> KLM</td><td>European hub</td><td class="num">43,582</td><td class="num">64,921</td><td class="num" style="color:#15803d">+21,339</td><td class="num"><span class="badge badge-green">+49%</span></td></tr>
+      <tr><td><strong>CX</strong> Cathay Pacific</td><td>Asia hub</td><td class="num">16,142</td><td class="num">34,851</td><td class="num" style="color:#15803d">+18,709</td><td class="num"><span class="badge badge-green">+116%</span></td></tr>
+      <tr><td><strong>BA</strong> British Airways</td><td>UK direct</td><td class="num">98,586</td><td class="num">111,267</td><td class="num" style="color:#15803d">+12,681</td><td class="num"><span class="badge badge-green">+13%</span></td></tr>
+      <tr><td><strong>ET</strong> Ethiopian</td><td>Africa hub</td><td class="num">4,594</td><td class="num">14,354</td><td class="num" style="color:#15803d">+9,760</td><td class="num"><span class="badge badge-green">+212%</span></td></tr>
+      <tr><td><strong>AF</strong> Air France</td><td>European hub</td><td class="num">46,914</td><td class="num">55,937</td><td class="num" style="color:#15803d">+9,023</td><td class="num"><span class="badge badge-green">+19%</span></td></tr>
+      <tr><td><strong>SQ</strong> Singapore Airlines</td><td>Asia hub</td><td class="num">8,373</td><td class="num">14,574</td><td class="num" style="color:#15803d">+6,201</td><td class="num"><span class="badge badge-green">+74%</span></td></tr>
+    </table>
+  </div>
+
+  <div class="section-title">Airline losers — Mar 2026 vs Mar 2025</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">ME carrier losses — India total (NA + Europe)</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c4"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">BLR — ME carriers monthly pax (NA+EU)</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#dc2626"></span>EK</span>
+        <span><span class="swatch" style="background:#1d4ed8"></span>QR</span>
+        <span><span class="swatch" style="background:#f59e0b"></span>EY</span>
+        <span><span class="swatch" style="background:#0d9488"></span>GF</span>
+      </div>
+      <div class="chart-wrap" style="height:200px"><canvas id="c5"></canvas></div>
+    </div>
+    <div class="chart-card full">
+      <div class="chart-title">BLR pax NA+EU — non-stop vs one-stop vs two-stop</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#1d4ed8"></span>Non-stop</span>
+        <span><span class="swatch" style="background:#dc2626"></span>One-stop</span>
+        <span><span class="swatch" style="background:#f59e0b"></span>Two-stop</span>
+      </div>
+      <div class="chart-wrap" style="height:190px"><canvas id="c6"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-bio">
+      <span class="footer-name">Ajay Singh</span>
+      <span class="footer-desc">Building open data tools for Indian aviation. Currently driving route development &amp; airline marketing at BLR Airport · Previously Unisys (air cargo) · MarketsandMarkets</span>
+    </div>
+    <div class="footer-copy">© 2025 Ajay Singh. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function showCity(c){
+  ['BLR','DEL','BOM','IND'].forEach(x=>{document.getElementById('winners-'+x).style.display=x===c?'block':'none';});
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['BLR','DEL','BOM','IND'][i]===c);});
+}
+const months=['Jan 25','Feb 25','Mar 25','Jan 26','Feb 26','Mar 26'];
+const grid={color:'rgba(0,0,0,0.04)'};
+const noLeg={legend:{display:false}};
+const xOpts={grid:{display:false},ticks:{font:{size:11}}};
+const yK={grid,ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v,font:{size:11}}};
+
+new Chart('c1',{type:'bar',data:{labels:['BLR','DEL','BOM','India'],datasets:[
+  {label:'Mar 2025',data:[43.1,21.7,35.7,38.9],backgroundColor:'#1d4ed8',borderRadius:3},
+  {label:'Mar 2026',data:[18.7,13.3,19.6,21.2],backgroundColor:'#dc2626',borderRadius:3},
+  {label:'Feb 2026',data:[40.0,23.0,34.2,39.4],backgroundColor:'#f59e0b',borderRadius:3},
+  {label:'Jan 2026',data:[39.7,22.3,34.4,39.7],backgroundColor:'#15803d',borderRadius:3}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{y:{grid,ticks:{callback:v=>v+'%',font:{size:11}}},x:xOpts}}});
+
+new Chart('c2',{type:'bar',data:{labels:months,datasets:[
+  {label:'Via ME',data:[73444,65721,76609,84415,69960,29418],backgroundColor:'#dc2626',borderRadius:2},
+  {label:'Non-ME',data:[97110,97338,115139,127981,104899,127893],backgroundColor:'#1d4ed8',borderRadius:2}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{y:yK,x:xOpts}}});
+
+new Chart('c3',{type:'bar',data:{labels:['DOH','DXB','AUH','BAH','MCT','SHJ'],datasets:[
+  {label:'Mar 2025',data:[21297,27191,20537,1716,848,1572],backgroundColor:'#1d4ed8',borderRadius:2},
+  {label:'Mar 2026',data:[3941,15662,7742,469,1028,435],backgroundColor:'#dc2626',borderRadius:2},
+  {label:'Jan 2026',data:[23734,29741,21746,5879,827,1842],backgroundColor:'#f59e0b',borderRadius:2},
+  {label:'Feb 2026',data:[21253,24432,17253,4413,598,1557],backgroundColor:'#0d9488',borderRadius:2}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{y:yK,x:xOpts}}});
+
+new Chart('c4',{type:'bar',data:{labels:['QR','EY','EK','AI','6E','GF','G9','KU'],datasets:[{data:[-117876,-81577,-64819,-46320,-35068,-20661,-18737,-8912],backgroundColor:'#dc2626',borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid,ticks:{callback:v=>v/1000+'K',font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:12}}}}}});
+
+new Chart('c5',{type:'line',data:{labels:months,datasets:[
+  {label:'EK',data:[29162,24333,27183,29736,24428,15657],borderColor:'#dc2626',tension:.3,pointRadius:3,borderWidth:2,fill:false},
+  {label:'QR',data:[17766,15818,16927,16238,14817,3455],borderColor:'#1d4ed8',tension:.3,pointRadius:3,borderWidth:2,borderDash:[4,3],fill:false},
+  {label:'EY',data:[18324,16843,17493,17906,14644,7271],borderColor:'#f59e0b',tension:.3,pointRadius:3,borderWidth:2,borderDash:[8,3],fill:false},
+  {label:'GF',data:[2671,1538,1716,5879,4413,469],borderColor:'#0d9488',tension:.3,pointRadius:3,borderWidth:2,fill:false}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{y:yK,x:xOpts}}});
+
+new Chart('c6',{type:'bar',data:{labels:months,datasets:[
+  {label:'Non-stop',data:[31826,32010,33400,37262,35072,37532],backgroundColor:'#1d4ed8',borderRadius:2},
+  {label:'One-stop',data:[139694,117292,123339,155897,126044,106146],backgroundColor:'#dc2626',borderRadius:2},
+  {label:'Two-stop',data:[20069,13699,13737,19067,13631,13483],backgroundColor:'#f59e0b',borderRadius:2}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{y:yK,x:xOpts}}});
+</script>
+</body>
+</html>
